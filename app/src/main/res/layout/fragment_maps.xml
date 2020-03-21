@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".mapsFragment">
+
+
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+    <ImageButton
+        android:id="@+id/goToMyLocalisation"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/bg_circle_primary"
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_gps_fixed_black_24dp"
+        />
+    <ImageButton
+        android:id="@+id/add_alert"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/bg_circle"
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_add_alert_black_24dp"
+        />
+
+    <RelativeLayout
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:id="@+id/zoom_in"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/bg_circle"
+            android:src="@drawable/ic_zoom_in_black_24dp"
+            />
+        <ImageButton
+            android:id="@+id/zoom_out"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/zoom_in"
+            android:background="@drawable/bg_circle"
+            android:src="@drawable/ic_zoom_out_black_24dp"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/start"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/bg_circle_primary"
+            android:textStyle="bold"
+            android:text="Start"
+            android:textSize="25dp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            />
+        <TextView
+            android:id="@+id/end"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/bg_circle_primary"
+            android:textStyle="bold"
+            android:layout_below="@id/start"
+            android:layout_marginTop="10dp"
+            android:text="End"
+            android:textSize="25dp"
+            android:textColor="@color/red"
+            android:gravity="center"
+            />
+    </RelativeLayout>
+
+</RelativeLayout>

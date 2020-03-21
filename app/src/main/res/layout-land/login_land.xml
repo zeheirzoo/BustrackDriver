@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/map"
+    tools:ignore="MissingDefaultResource">
+
+
+<ImageView
+    android:id="@+id/logo"
+    android:layout_width="250dp"
+    android:layout_height="250dp"
+    android:background="@drawable/logo"
+    android:layout_margin="10dp"
+    android:layout_centerVertical="true"/>
+        <RelativeLayout
+            android:layout_toRightOf="@+id/logo"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_margin="40dp"
+            android:background="@drawable/background_card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/header"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:textSize="30dp"
+                android:gravity="center"
+                android:text="Login"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:textColor="@color/colorPrimary"
+                android:layout_centerHorizontal="true"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/header"
+
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:contentDescription="enter your  email"
+                    android:drawableRight="@drawable/ic_person_outline_black_24dp"
+                    android:hint="@string/email"
+                    android:padding="10dp"
+                    android:textSize="15dp"
+                    android:inputType="textEmailAddress"
+                    android:background="@drawable/bg_challenge"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_below="@id/input_email"
+                android:id="@+id/input_pass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/pass1"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:contentDescription="enter your  email"
+                    android:drawableRight="@drawable/ic_lock_outline_black_24dp"
+                    android:hint="@string/password"
+                    android:textSize="15dp"
+                    android:padding="10dp"
+                    android:inputType="textPassword"
+                    android:background="@drawable/bg_challenge"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <RelativeLayout
+                android:textAlignment="center"
+                android:padding="15dp"
+
+                android:layout_below="@id/input_pass"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/login_button"
+                    android:layout_width="120dp"
+                    android:layout_height="60dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/login_button"
+                    android:text="Login"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/passtxt"
+                    android:id="@+id/forgot"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginLeft="5dp"
+                    android:textStyle="bold"
+                    android:textSize="16dp"
+                    />
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
