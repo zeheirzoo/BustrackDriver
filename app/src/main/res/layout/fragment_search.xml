@@ -9,7 +9,6 @@
 
     <ImageButton
         android:id="@+id/menu_btn"
-        android:layout_centerVertical="true"
         android:layout_width="80dp"
         android:elevation="10dp"
         android:layout_margin="10dp"

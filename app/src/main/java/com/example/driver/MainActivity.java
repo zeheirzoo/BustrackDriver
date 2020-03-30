@@ -1,19 +1,31 @@
 package com.example.driver;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.budiyev.android.codescanner.CodeScanner;
+import com.budiyev.android.codescanner.CodeScannerView;
+import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.INTERNET;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
      RelativeLayout.LayoutParams menuParams;
+    Vibrator vibrator;
+    CodeScanner mCodeScanner;
+    Activity activity=this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,29 +47,47 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         fragmentManager=getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame_content,new mapsFragment()).commit();
-
-
-
         animation= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
 
-        menu_layout=findViewById(R.id.menu_view);
-        menuButton=findViewById(R.id.menu_btn);
-        menuParams= (RelativeLayout.LayoutParams) menu_layout.getLayoutParams();
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        if (!CheckPermissions())RequestPermissions();
 
-                if (click==0){
-                 openMenu();
-                }else {
-                  closeMenu();
-                }
-                menu_layout.setAnimation(animation);
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+
+        final CodeScannerView scannerView =findViewById(R.id.scanner_view);
+        mCodeScanner = new CodeScanner(this, scannerView);
+        mCodeScanner.setAutoFocusEnabled(true);
+        mCodeScanner.startPreview();
+
+        mCodeScanner.setDecodeCallback(new DecodeCallback() {
+            @Override
+            public void onDecoded(@NonNull com.google.zxing.Result result) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+
+                });
+            }
+
+
+
+        });
+        scannerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCodeScanner.startPreview();
             }
         });
 
 
+
+
     }
+
+
+
 
     public void onClickItem(View view) {
         int itemIndex=view.getId();
@@ -66,23 +99,18 @@ public class MainActivity extends AppCompatActivity {
         if (itemIndex==R.id.nav_settings)fragmentTransaction.replace(R.id.frame_content,new SettingsFragment()).addToBackStack( "pager" );
         if (itemIndex==R.id.nav_help)fragmentTransaction.replace(R.id.frame_content,new HelpFragment()).addToBackStack( "pager" );
         if (itemIndex==R.id.nav_profile)fragmentTransaction.replace(R.id.frame_content,new ProfileFragment()).addToBackStack( "pager" );
-        closeMenu();
         fragmentTransaction.commit();
 
     }
 
-    public void openMenu() {
-        menuButton.setImageResource(R.drawable.ic_close);
-        menuButton.setBackground(getResources().getDrawable(R.drawable.bg_circl_red));
-        menu_layout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
-        click=1;
 
+    public boolean CheckPermissions() {
+        int result1 = ActivityCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+        int result2 = ActivityCompat.checkSelfPermission(getApplicationContext(), INTERNET);
+        int result3 = ActivityCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        return result2 == PackageManager.PERMISSION_GRANTED&&result1 == PackageManager.PERMISSION_GRANTED&&result3 == PackageManager.PERMISSION_GRANTED;
     }
-    public void closeMenu() {
-        menuButton.setImageResource(R.drawable.ic_sort_black_24dp);
-        menuButton.setBackground(getResources().getDrawable(R.drawable.bg_circle_primary));
-        menu_layout.setAnimation(animation);
-        menu_layout.setLayoutParams(menuParams);
-        click=0;
+    private void RequestPermissions() {
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{CAMERA,INTERNET,WRITE_EXTERNAL_STORAGE}, 1);
     }
 }

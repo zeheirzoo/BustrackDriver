@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android" >
@@ -8,266 +9,143 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/frame_content"
+        android:layout_above="@id/bottom_layout"
+        android:layout_toRightOf="@id/scanner_layout"
+        />
+
+    <RelativeLayout
+        android:id="@+id/scanner_layout"
+        android:layout_width="250dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@id/bottom_layout"
+        >
+
+        <com.budiyev.android.codescanner.CodeScannerView
+            android:id="@+id/scanner_view"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            app:autoFocusButtonColor="@color/colorPrimary"
+            app:autoFocusButtonVisible="false"
+            app:flashButtonColor="@color/white"
+            app:flashButtonVisible="false"
+            app:frameColor="@color/colorPrimaryDark"
+            app:frameCornersSize="80dp"
+            app:frameCornersRadius="20dp"
+            app:frameAspectRatioWidth="1"
+            app:frameAspectRatioHeight="1"
+            app:frameSize="0.9"
+            app:frameThickness="8dp"
+            android:layout_alignParentTop="true"
+            app:maskColor="#FFFFFF"/>
+
+    </RelativeLayout>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:layout_alignParentBottom="true"
+    android:padding="5dp"
+    android:id="@+id/bottom_layout"
+    >
+
+    <ImageButton
+        android:onClick="onClickItem"
+        android:id="@+id/prev"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="10dp"
+        android:background="@color/colorPrimaryDark3"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_arrow_back_black_50dp"
+
+        />
+    <ImageButton
+        android:onClick="onClickItem"
+
+        android:id="@+id/next"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark3"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_arrow_forward_black_50dp"
+
         />
 
 
-    <RelativeLayout
-        android:id="@+id/menu_view"
-        android:layout_margin="10dp"
-        android:elevation="10dp"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:background="@drawable/bg_circle_primary">
-        <ImageButton
-            android:id="@+id/menu_btn"
-            android:layout_width="80dp"
-            android:elevation="10dp"
-            android:layout_height="80dp"
-            android:background="@drawable/bg_circle_primary"
-            android:src="@drawable/ic_sort_black_24dp"/>
-        <RelativeLayout
-            android:padding="15dp"
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E9FFFFFF"
+        android:scrollbars="none"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:id="@+id/scroll_menu"
+        android:layout_toRightOf="@id/prev"
+        android:layout_toLeftOf="@id/next"
+        >
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <LinearLayout
-                android:id="@+id/nav_map"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
+
+            <ImageButton
                 android:onClick="onClickItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
+
+                android:id="@+id/nav_map"
+                android:layout_width="250dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
                 android:background="@color/colorPrimary"
-                android:orientation="horizontal"
-                android:layout_margin="5dp"
-                android:padding="40dp"
-                android:layout_toLeftOf="@id/center"
-                android:layout_above="@id/center"
-                tools:ignore="MissingConstraints">
-                <ImageView
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_map"
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent"/>
-                <TextView
-                    android:text="Map"
-                    android:textSize="40dp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                />
 
-
-            </LinearLayout>
-            <LinearLayout
+            <ImageButton
                 android:id="@+id/nav_alert"
                 android:onClick="onClickItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@id/center"
-                android:layout_above="@id/center"
+
+                android:layout_width="250dp"
+                android:layout_marginRight="10dp"
                 android:background="@color/red"
-                android:orientation="horizontal"
+                android:layout_height="match_parent"/>
 
-                android:layout_margin="5dp"
-                android:padding="40dp"
-                tools:ignore="MissingConstraints">
-                <ImageView
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_warning_black_24dp"
-                    android:layout_width="100dp"
-
-                    android:layout_height="match_parent"/>
-                <TextView
-                    android:text="Alert"
-                    android:textSize="40dp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-            </LinearLayout>
-            <LinearLayout
+            <ImageButton
                 android:id="@+id/nav_search"
                 android:onClick="onClickItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/center"
-                android:padding="40dp"
+
+                android:layout_width="250dp"
+                android:layout_marginRight="10dp"
                 android:background="@color/green_light"
-                android:orientation="horizontal"
+                android:layout_height="match_parent"/>
 
-                android:layout_margin="5dp"
-                android:layout_toLeftOf="@id/center"
-                tools:ignore="MissingConstraints">
-                <ImageView
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_search_black_24dp"
-                    android:layout_width="100dp"
+            <ImageButton
+                android:id="@+id/nav_settings"
+                android:layout_width="250dp"
 
-                    android:layout_height="match_parent"/>
-                <TextView
-                    android:text="Search"
-                    android:textSize="40dp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@id/center"
-                android:layout_below="@id/center"
-                android:orientation="horizontal"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:background="@color/colorPrimaryDark2"
+                android:onClick="onClickItem" />
 
-                android:layout_margin="5dp"
-                tools:ignore="MissingConstraints">
+            <ImageButton
+                android:id="@+id/nav_profile"
+                android:onClick="onClickItem"
 
+                android:layout_width="250dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/orange"
+                android:layout_height="match_parent"/>
+            <ImageButton
+                android:id="@+id/nav_help"
+                android:onClick="onClickItem"
+                android:layout_width="250dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/move"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
 
-                <RelativeLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent">
-
-                    <LinearLayout
-                        android:onClick="onClickItem"
-                        android:id="@+id/nav_settings"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_toLeftOf="@id/center2"
-                        android:layout_above="@id/center2"
-                        android:background="@color/colorPrimaryDark2"
-                        android:orientation="horizontal"
-                        android:padding="10dp"
-                        android:layout_margin="2dp"
-                        tools:ignore="MissingConstraints">
-                        <ImageView
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_settings_black_24dp"
-                            android:layout_width="70dp"
-                            android:layout_height="match_parent"/>
-                        <TextView
-                            android:text="Settings"
-                            android:textSize="30dp"
-                            android:textStyle="bold"
-                            android:gravity="center"
-                            android:textColor="@color/white"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:onClick="onClickItem"
-                        android:id="@+id/nav_profile"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_toRightOf="@id/center2"
-                        android:layout_above="@id/center2"
-                        android:background="@color/orange"
-                        android:orientation="horizontal"
-                        android:padding="10dp"
-                        android:layout_margin="2dp"
-                        tools:ignore="MissingConstraints">
-                        <ImageView
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_person"
-                            android:layout_width="70dp"
-                            android:layout_height="match_parent"/>
-                        <TextView
-                            android:text="profile"
-                            android:textSize="30dp"
-                            android:textStyle="bold"
-                            android:gravity="center"
-                            android:textColor="@color/white"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:onClick="onClickItem"
-                        android:id="@+id/nav_help"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_toLeftOf="@id/center2"
-                        android:layout_below="@id/center2"
-                        android:background="@color/move"
-                        android:orientation="horizontal"
-                        android:padding="10dp"
-                        android:layout_margin="2dp"
-                        tools:ignore="MissingConstraints">
-                        <ImageView
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_help"
-                            android:layout_width="70dp"
-
-                            android:layout_height="match_parent"/>
-                        <TextView
-                            android:text="Help"
-                            android:textSize="30dp"
-                            android:textStyle="bold"
-                            android:gravity="center"
-                            android:textColor="@color/white"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:onClick="onClickItem"
-                        android:id="@+id/nav_logout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_toRightOf="@id/center2"
-                        android:layout_below="@id/center2"
-                        android:background="@color/white"
-                        android:orientation="horizontal"
-                        android:padding="10dp"
-                        android:layout_margin="2dp"
-                        tools:ignore="MissingConstraints">
-                        <ImageView
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_power_settings_new_black_24dp"
-                            android:layout_width="70dp"
-
-                            android:layout_height="match_parent"/>
-                        <TextView
-                            android:text="Logout"
-                            android:textSize="30dp"
-                            android:textStyle="bold"
-
-                            android:gravity="center"
-                            android:textColor="@color/red"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"/>
-                    </LinearLayout>
-                   <Button
-                       android:id="@+id/center2"
-                       android:layout_width="1dp"
-                       android:layout_height="1dp"
-                       android:layout_centerInParent="true"/>
-               </RelativeLayout>
-
-            </LinearLayout>
-            <Button
-                android:id="@+id/center"
-                android:layout_width="1dp"
-                android:layout_height="1dp"
-
-                android:layout_centerInParent="true"/>
-        </RelativeLayout>
-
-    </RelativeLayout>
+    </HorizontalScrollView>
+</RelativeLayout>
 
 </RelativeLayout>
