@@ -25,10 +25,10 @@
         <com.budiyev.android.codescanner.CodeScannerView
             android:id="@+id/scanner_view"
             android:layout_width="250dp"
-            android:layout_height="250dp"
+            android:layout_height="wrap_content"
             app:autoFocusButtonColor="@color/colorPrimary"
             app:autoFocusButtonVisible="false"
-            app:flashButtonColor="@color/white"
+            app:flashButtonColor="@color/colorPrimaryDark2"
             app:flashButtonVisible="false"
             app:frameColor="@color/colorPrimaryDark"
             app:frameCornersSize="80dp"
@@ -38,7 +38,41 @@
             app:frameSize="0.9"
             app:frameThickness="8dp"
             android:layout_alignParentTop="true"
+            android:layout_above="@id/center"
             app:maskColor="#FFFFFF"/>
+            <view
+                android:id="@+id/center"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:layout_centerInParent="true"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_below="@id/center"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:onClick="onClickItem"
+                android:layout_above="@id/center2"
+                android:layout_width="250dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:background="@color/colorPrimary2"
+                />
+            <view
+                android:id="@+id/center2"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:layout_centerInParent="true"/>
+            <ImageButton
+                android:onClick="onClickItem"
+                android:layout_below="@id/center2"
+                android:layout_width="250dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+
+                android:background="@color/red"
+                />
+        </RelativeLayout>
 
     </RelativeLayout>
 <RelativeLayout
@@ -62,7 +96,6 @@
         />
     <ImageButton
         android:onClick="onClickItem"
-
         android:id="@+id/next"
         android:layout_width="100dp"
         android:layout_height="match_parent"
