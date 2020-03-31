@@ -3,11 +3,13 @@ package com.example.driver;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
@@ -29,59 +31,42 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
 
-    private GoogleMap mMap;
-    RelativeLayout menu_layout;
-    ImageButton menuButton;
-    Animation animation;
-    int click=0;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
-     RelativeLayout.LayoutParams menuParams;
-    Vibrator vibrator;
-    CodeScanner mCodeScanner;
-    Activity activity=this;
+    HorizontalScrollView scrollmenu;
+    ImageButton next,prev;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().hide();
-        fragmentManager=getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.frame_content,new mapsFragment()).commit();
-        animation= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
 
+        getSupportActionBar().hide();
         if (!CheckPermissions())RequestPermissions();
 
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        fragmentManager=getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.frame_content,new HomeFragment()).commit();
+         next=findViewById(R.id.next);
+         prev=findViewById(R.id.prev);
+        scrollmenu =findViewById(R.id.scroll_menu);
 
-
-        final CodeScannerView scannerView =findViewById(R.id.scanner_view);
-        mCodeScanner = new CodeScanner(this, scannerView);
-        mCodeScanner.setAutoFocusEnabled(true);
-        mCodeScanner.startPreview();
-
-        mCodeScanner.setDecodeCallback(new DecodeCallback() {
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDecoded(@NonNull com.google.zxing.Result result) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+            public void onClick(View v) {
+                scrollmenu.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+                v.setBackgroundColor(Color.GRAY);
+                prev.setBackgroundResource(R.color.colorPrimaryDark);
 
-                    }
-
-                });
-            }
-
-
-
-        });
-        scannerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mCodeScanner.startPreview();
             }
         });
+        prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollmenu.fullScroll(HorizontalScrollView.FOCUS_LEFT);
+                v.setBackgroundColor(Color.GRAY);
+                next.setBackgroundResource(R.color.colorPrimaryDark);
 
-
+            }
+        });
 
 
     }
@@ -93,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         int itemIndex=view.getId();
         fragmentTransaction =getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_out);
-        if (itemIndex==R.id.nav_map)fragmentTransaction.replace(R.id.frame_content,new mapsFragment()).addToBackStack( "pager" );
+        if (itemIndex==R.id.nav_home)fragmentTransaction.replace(R.id.frame_content,new HomeFragment()).addToBackStack( "pager" );
         if (itemIndex==R.id.nav_alert)fragmentTransaction.replace(R.id.frame_content,new AlertFragment()).addToBackStack( "pager" );
         if (itemIndex==R.id.nav_search)fragmentTransaction.replace(R.id.frame_content,new SearchFragment()).addToBackStack( "pager" );
         if (itemIndex==R.id.nav_settings)fragmentTransaction.replace(R.id.frame_content,new SettingsFragment()).addToBackStack( "pager" );
@@ -113,4 +98,5 @@ public class MainActivity extends AppCompatActivity {
     private void RequestPermissions() {
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{CAMERA,INTERNET,WRITE_EXTERNAL_STORAGE}, 1);
     }
+
 }

@@ -122,8 +122,8 @@ public class mapsFragment extends Fragment  implements OnMapReadyCallback,
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(36.357646,6.604993)));
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mMap.setMinZoomPreference(15);
-        mMap.setMaxZoomPreference(25);
+        mMap.setMinZoomPreference(18);
+        mMap.setMaxZoomPreference(22);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         LatLng sydney2 = new LatLng( 36.241248,6.569875);
 //        mMap.setMyLocationEnabled(true);

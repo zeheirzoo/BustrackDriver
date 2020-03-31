@@ -10,71 +10,8 @@
         android:layout_height="match_parent"
         android:id="@+id/frame_content"
         android:layout_above="@id/bottom_layout"
-        android:layout_toRightOf="@id/scanner_layout"
         />
 
-    <RelativeLayout
-        android:id="@+id/scanner_layout"
-        android:layout_width="250dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_above="@id/bottom_layout"
-        >
-
-        <com.budiyev.android.codescanner.CodeScannerView
-            android:id="@+id/scanner_view"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            app:autoFocusButtonColor="@color/colorPrimary"
-            app:autoFocusButtonVisible="false"
-            app:flashButtonColor="@color/colorPrimaryDark2"
-            app:flashButtonVisible="false"
-            app:frameColor="@color/colorPrimaryDark"
-            app:frameCornersSize="80dp"
-            app:frameCornersRadius="20dp"
-            app:frameAspectRatioWidth="1"
-            app:frameAspectRatioHeight="1"
-            app:frameSize="0.9"
-            app:frameThickness="8dp"
-            android:layout_alignParentTop="true"
-            android:layout_above="@id/center"
-            app:maskColor="#FFFFFF"/>
-            <view
-                android:id="@+id/center"
-                android:layout_width="1dp"
-                android:layout_height="1dp"
-                android:layout_centerInParent="true"/>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_below="@id/center"
-            android:layout_height="match_parent">
-
-            <ImageButton
-                android:onClick="onClickItem"
-                android:layout_above="@id/center2"
-                android:layout_width="250dp"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:background="@color/colorPrimary2"
-                />
-            <view
-                android:id="@+id/center2"
-                android:layout_width="1dp"
-                android:layout_height="1dp"
-                android:layout_centerInParent="true"/>
-            <ImageButton
-                android:onClick="onClickItem"
-                android:layout_below="@id/center2"
-                android:layout_width="250dp"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-
-                android:background="@color/red"
-                />
-        </RelativeLayout>
-
-    </RelativeLayout>
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="200dp"
@@ -86,10 +23,11 @@
     <ImageButton
         android:onClick="onClickItem"
         android:id="@+id/prev"
-        android:layout_width="100dp"
+        android:layout_width="120dp"
         android:layout_height="match_parent"
         android:layout_marginRight="10dp"
-        android:background="@color/colorPrimaryDark3"
+        android:background="@android:color/darker_gray"
+
         android:layout_alignParentLeft="true"
         android:src="@drawable/ic_arrow_back_black_50dp"
 
@@ -97,7 +35,7 @@
     <ImageButton
         android:onClick="onClickItem"
         android:id="@+id/next"
-        android:layout_width="100dp"
+        android:layout_width="120dp"
         android:layout_height="match_parent"
         android:background="@color/colorPrimaryDark3"
         android:layout_alignParentRight="true"
@@ -126,8 +64,8 @@
 
             <ImageButton
                 android:onClick="onClickItem"
-
-                android:id="@+id/nav_map"
+android:src="@drawable/ic_home"
+                android:id="@+id/nav_home"
                 android:layout_width="250dp"
                 android:layout_height="match_parent"
                 android:layout_marginRight="10dp"
@@ -137,7 +75,7 @@
             <ImageButton
                 android:id="@+id/nav_alert"
                 android:onClick="onClickItem"
-
+android:src="@drawable/ic_warning_black_24dp"
                 android:layout_width="250dp"
                 android:layout_marginRight="10dp"
                 android:background="@color/red"
@@ -171,6 +109,18 @@
                 android:layout_height="match_parent"/>
             <ImageButton
                 android:id="@+id/nav_help"
+                android:onClick="onClickItem"
+                android:layout_width="250dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/move"
+                android:layout_height="match_parent"/>
+            <ImageButton
+                android:onClick="onClickItem"
+                android:layout_width="250dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/move"
+                android:layout_height="match_parent"/>
+            <ImageButton
                 android:onClick="onClickItem"
                 android:layout_width="250dp"
                 android:layout_marginRight="10dp"

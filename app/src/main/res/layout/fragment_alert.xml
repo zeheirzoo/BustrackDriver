@@ -6,13 +6,5 @@
     android:background="@color/red"
     tools:context=".AlertFragment">
 
-    <ImageButton
-        android:id="@+id/menu_btn"
-        android:layout_width="80dp"
-        android:elevation="10dp"
-        android:layout_margin="10dp"
-        android:layout_height="80dp"
-        android:background="@drawable/bg_circle"
-        android:src="@drawable/ic_home"/>
 
 </RelativeLayout>

@@ -5,85 +5,92 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/map"
-    android:padding="20dp"
+    android:padding="30dp"
     tools:ignore="MissingDefaultResource">
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:padding="20dp"
-            android:id="@+id/Qr_login">
-            <ImageButton
-                android:layout_width="400dp"
-                android:layout_height="400dp"
-                android:background="@drawable/qr"
-                android:layout_centerInParent="true"
-                android:id="@+id/qr_code"
-                />
 
-
-
-
-        </RelativeLayout>
 
 
 
         <RelativeLayout
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:layout_toRightOf="@id/Qr_login"
-            android:background="@drawable/background_card"
+            android:background="#BEFCFCFC"
             android:layout_width="match_parent"
             android:layout_margin="10dp"
             android:layout_centerVertical="true"
-            android:layout_height="wrap_content">
-
+            android:layout_height="match_parent">
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@id/center"
+                android:padding="20dp"
+                android:background="@color/colorPrimaryDark"
+                android:id="@+id/Qr_login">
+                <ImageButton
+                    android:background="@drawable/qr"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/qr_code"
+
+                    android:layout_width="400dp"
+                    android:layout_height="400dp"
+                    />
+
+
+
+            </RelativeLayout>
+            <Button
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:layout_centerInParent="true"
+                android:id="@+id/center"/>
+            <LinearLayout
+
+                android:orientation="vertical"
+                android:layout_toRightOf="@id/center"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:padding="50dp"
                 >
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/input_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-
-                    >
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/email"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/username"
+                        android:padding="10dp"
+                        android:textStyle="bold"
+                        android:textSize="25dp"
+                        />
+                    <EditText
+                        android:id="@+id/userName"
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:contentDescription="enter your  email"
-                        android:hint="@string/email"
                         android:padding="10dp"
-                        android:textSize="25dp"
+                        android:textSize="35dp"
+
+                        android:textColor="@color/colorPrimaryDark"
                         android:inputType="textEmailAddress"
+                        android:background="@drawable/bg_challenge"
                         />
-                </com.google.android.material.textfield.TextInputLayout>
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_below="@id/input_email"
-                    android:id="@+id/input_pass"
-                    android:layout_marginTop="20dp"
+                <TextView
                     android:layout_width="match_parent"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    app:passwordToggleEnabled="true"
                     android:layout_height="wrap_content"
-                    >
-                    <com.google.android.material.textfield.TextInputEditText
+                    android:text="@string/password"
+                    android:layout_marginTop="30dp"
+                    android:padding="10dp"
+                    android:textStyle="bold"
+                    android:textSize="25dp"
+                    />
+                    <EditText
                         android:id="@+id/pass1"
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:contentDescription="enter your  email"
-                        android:hint="@string/password"
-                        android:textSize="25dp"
+                        android:textSize="35dp"
                         android:padding="10dp"
-
+                        android:background="@drawable/bg_challenge"
                         android:inputType="textPassword"
+                        android:textColor="@color/colorPrimaryDark"
+
                         />
-                </com.google.android.material.textfield.TextInputLayout>
 
 
 
@@ -91,8 +98,7 @@
                     android:id="@+id/login_button"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
-                    android:layout_below="@id/input_pass"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="30dp"
                     android:textSize="30dp"
                     android:layout_alignParentRight="true"
                     android:background="@drawable/login_button"
@@ -103,6 +109,6 @@
                     />
 
 
-            </RelativeLayout>
+            </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>

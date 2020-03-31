@@ -47,5 +47,7 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'com.android.support:design:28.0.0-alpha1'
 
+    implementation 'com.github.vinaygopinath:StepView:2.0.1'
+
 
 }

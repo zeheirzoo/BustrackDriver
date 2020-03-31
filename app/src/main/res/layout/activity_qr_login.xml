@@ -6,9 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".QrLoginActivity">
 
+    <RelativeLayout
+        android:layout_toLeftOf="@+id/center"
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:layout_height="match_parent">
+    </RelativeLayout>
+    <Button
+        android:id="@+id/center"
+        android:layout_width="1dp"
+        android:layout_centerInParent="true"
+        android:layout_height="1dp"/>
 
     <com.budiyev.android.codescanner.CodeScannerView
         android:id="@+id/scanner_view"
+        android:layout_toRightOf="@id/center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:autoFocusButtonColor="@color/colorPrimary"
@@ -18,10 +30,10 @@
         app:frameColor="@color/colorPrimaryDark"
         app:frameCornersSize="80dp"
         app:frameCornersRadius="20dp"
-        app:frameAspectRatioWidth="7"
+        app:frameAspectRatioWidth="5"
         app:frameAspectRatioHeight="5"
         app:frameSize="0.8"
         app:frameThickness="8dp"
-        app:maskColor="#D8CED2E7"/>
+        app:maskColor="#D8FFFFFF"/>
 
 </RelativeLayout>
