@@ -27,13 +27,13 @@
         app:autoFocusButtonVisible="false"
         app:flashButtonColor="@color/white"
         app:flashButtonVisible="true"
-        app:frameColor="@color/colorPrimaryDark"
-        app:frameCornersSize="80dp"
-        app:frameCornersRadius="20dp"
-        app:frameAspectRatioWidth="5"
-        app:frameAspectRatioHeight="5"
-        app:frameSize="0.8"
-        app:frameThickness="8dp"
+        app:frameAspectRatioHeight="1"
+        app:frameAspectRatioWidth="1"
+        app:frameColor="@color/white"
+        app:frameCornersRadius="5dp"
+        app:frameCornersSize="100dp"
+        app:frameSize="0.9"
+        app:frameThickness="20dp"
         app:maskColor="#D8FFFFFF"/>
 
 </RelativeLayout>

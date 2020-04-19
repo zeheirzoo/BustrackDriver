@@ -21,4 +21,23 @@
     <string name="sendCode">Send Code</string>
     <string name="title_activity_map">Map</string>
     <string name="title_activity_maps">Map</string>
+    <string name="status" />
+
+
+    <string-array name="status">
+        <item>JBEL EL WAHCH</item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item>ziadia</item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item>zighoud</item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item>wadl7ed</item>
+
+    </string-array>
 </resources>

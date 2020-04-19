@@ -6,87 +6,178 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".HomeFragment">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/frame_content_home"
-        >
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:elevation="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content">
         <Button
-            android:elevation="10dp"
             android:id="@+id/nav_map"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="100dp"
             android:layout_margin="5dp"
-android:background="@color/colorPrimary"
+            android:padding="20dp"
+            android:background="@color/colorPrimary"
             android:text="maps"
+            android:layout_centerHorizontal="true"
             android:textColor="@color/white"
             android:textSize="30dp"
+            android:drawableLeft="@drawable/ic_map"
+            android:drawablePadding="20dp"
             />
 
         <Button
             android:id="@+id/nav_line"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="100dp"
             android:layout_margin="5dp"
-            android:elevation="10dp"
-            android:text="Line"
+            android:padding="20dp"
             android:background="@android:color/darker_gray"
             android:textColor="@color/white"
             android:textSize="30dp"
+
+            android:drawableLeft="@drawable/ic_line"
+            android:drawablePadding="20dp"
             android:layout_toRightOf="@id/nav_map" />
-        <com.budiyev.android.codescanner.CodeScannerView
-            android:id="@+id/scanner_view"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            app:autoFocusButtonColor="@color/colorPrimary"
-            app:autoFocusButtonVisible="false"
-            app:flashButtonColor="@color/colorPrimaryDark2"
-            app:flashButtonVisible="false"
-            app:frameColor="@color/white"
-            app:frameCornersSize="100dp"
-            app:frameCornersRadius="0dp"
-            app:frameAspectRatioWidth="1"
-            app:frameAspectRatioHeight="1"
-            app:frameSize="0.9"
-            app:frameThickness="16dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:elevation="10dp"
-            app:maskColor="#6D85BBE6"/>
+    </LinearLayout>
+
 
         <RelativeLayout
             android:elevation="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <Button
+                android:id="@+id/next"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:layout_above="@id/center2"
                 android:layout_margin="5dp"
                 android:background="@color/colorPrimary2"
-                android:text="Start"
+                android:text="Avancer"
                 android:textColor="@color/white"
-                android:textSize="40dp" />
+                android:textSize="25dp" />
+
+
 
             <Button
-                android:id="@+id/center2"
-                android:layout_width="1dp"
-                android:layout_height="1dp"
-                android:layout_centerInParent="true" />
-
-            <Button
+                android:id="@+id/prev"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:layout_below="@id/center2"
+                android:layout_below="@id/next"
                 android:layout_margin="5dp"
                 android:background="@color/red"
-                android:text="End"
+                android:text="reculler"
                 android:textColor="@color/white"
-                android:textSize="40dp" />
+                android:textSize="25dp" />
         </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent"
+        android:id="@+id/line_layout">
+        <TextView
+            android:id="@+id/center2"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:text="La Line : JBEL ELWAHCH --> NOUVELLE VILLE"
+            android:textColor="@color/white"
+            android:textSize="40dp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true" />
+<!--        <ImageButton-->
+<!--            android:id="@+id/me"-->
+<!--            android:background="@drawable/login_button"-->
+<!--            android:translationY="113dp"-->
+<!--            android:translationX="116dp"-->
+<!--            android:elevation="10dp"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:gravity="center"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:layout_height="90dp"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:src="@drawable/ic_directions_bus_black_24dp"-->
+<!--            />-->
+
+        <params.com.stepview.StatusViewScroller
+            android:id="@+id/status_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/center2"
+            android:layout_centerVertical="true"
+            android:paddingTop="30dp"
+            android:paddingBottom="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="45dp"
+            app:alignStatusWithCurrent="true"
+            app:currentDrawable="@drawable/ic_directions_bus_black_24dp"
+            app:circleColor="@color/red"
+            app:circleColorCurrent="#3F51B5"
+            app:circleColorIncomplete="@color/gray"
+            app:circleColorType="fillStroke"
+            app:circleStrokeColor="@color/white"
+            app:completeDrawable="@drawable/ic_check_white"
+            app:currentCount="1"
+            app:currentStepZoom="0.9"
+            app:drawLabels="false"
+            app:lineColor="@color/red"
+            app:lineColorCurrent="#7AF44336"
+            app:lineColorIncomplete="#B7B4B7BA"
+            app:lineGap="5dp"
+            app:lineWidth="15dp"
+            app:statusTopMargin="30dp"
+            app:textColorLabels="@android:color/white"
+            app:textColorLabelsCurrent="@android:color/white"
+            app:textColorStatus="@color/white"
+            app:textSizeStatus="25dp" />
     </RelativeLayout>
+    <RelativeLayout android:id="@+id/map_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <org.osmdroid.views.MapView
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        <RelativeLayout
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/zoomin"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="15dp"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/bg_circle"
+                android:src="@drawable/ic_zoom_in_black_24dp"
+                />
+            <ImageButton
+                android:id="@+id/zoomout"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="15dp"
+                android:layout_below="@id/zoomin"
+                android:background="@drawable/bg_circle"
+                android:src="@drawable/ic_zoom_out_black_24dp"
+                />
+            <ImageButton
+                android:id="@+id/goToMyLocalisation"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentStart="true"
+                android:layout_margin="15dp"
+                android:layout_below="@id/zoomout"
+                android:background="@drawable/bg_circle_primary"
+                android:src="@drawable/ic_gps_fixed_black_24dp"
+                />
+        </RelativeLayout>
 
 
+    </RelativeLayout>
 
 </RelativeLayout>

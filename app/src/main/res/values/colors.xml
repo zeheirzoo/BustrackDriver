@@ -11,9 +11,9 @@
     <color name="colorFacebook">#3D9EE9</color>
     <color name="red">#EDEC6B5F</color>
     <color name="green">#29C530</color>
-    <color name="green_light">#69BB97</color>
+    <color name="green_light">#3FCE8F</color>
     <color name="gray">#ADAEAF</color>
-    <color name="orange">#D3AF91</color>
+    <color name="orange">#EC7F54</color>
     <color name="yellow">#C0B238</color>
     <color name="move">#664999</color>
 </resources>
