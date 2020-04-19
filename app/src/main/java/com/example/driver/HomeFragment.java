@@ -33,6 +33,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -77,25 +78,23 @@ public class HomeFragment extends Fragment {
     FragmentManager fragmentManager;
     Vibrator vibrator;
     RelativeLayout mapLayout,lineLayout;
-
+    Handler handler ;
+    StatusViewScroller statusViewScroller;
     Button lineButton,mapButton;
     boolean b=false;
     MapView map = null;
-    ArrayList ItemArray;
     IMapController mapController;
-    GeoPoint touchPoint, myLocalPoint;
-    Marker myMarker, startMarker;
+    GeoPoint  myLocalPoint;
+    Marker  startMarker;
     double latitude;
     double longitude;
     String provider;
     ArrayList<String> stationNamesStrings;
+    TextView startStation,targetStation;
     public HomeFragment() {
         // Required empty public constructor
     }
-    Handler handler ;
-    StatusViewScroller statusViewScroller;
-    StepView stepView;
-    StatusView statusView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
@@ -110,7 +109,9 @@ public class HomeFragment extends Fragment {
          mapButton=view.findViewById(R.id.nav_map);
          lineButton=view.findViewById(R.id.nav_line);
         mapLayout=view.findViewById(R.id.map_layout);
-         lineLayout=view.findViewById(R.id.line_layout);
+        lineLayout=view.findViewById(R.id.line_layout);
+        startStation=view.findViewById(R.id.start);
+        targetStation=view.findViewById(R.id.target);
 
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,7 +149,7 @@ public class HomeFragment extends Fragment {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                statusViewScroller.scrollBy(150,0);
+                statusViewScroller.scrollBy(180,0);
 //                Toast.makeText(getContext(), statusViewScroller.getStatusView().getMinStatusAdjacentMargin()+"", Toast.LENGTH_SHORT).show();
                 statusViewScroller.getStatusView().setCurrentCount( statusViewScroller.getStatusView().getCurrentCount()+1);
 
@@ -159,7 +160,7 @@ public class HomeFragment extends Fragment {
         prev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                statusViewScroller.scrollBy(-150,0);
+                statusViewScroller.scrollBy(-180,0);
 //                Toast.makeText(getContext(), statusViewScroller.getStatusView().getMinStatusAdjacentMargin()/4+"", Toast.LENGTH_SHORT).show();
                 statusViewScroller.getStatusView().setCurrentCount( statusViewScroller.getStatusView().getCurrentCount()-1);
             }
@@ -294,6 +295,12 @@ public class HomeFragment extends Fragment {
                     JSONObject obj = (JSONObject) stationArray.get(i);
                     GeoPoint point= new GeoPoint(obj.getDouble("latitude"),
                             obj.getDouble("longitude"));
+                    if(i==0){
+                        startStation.setText(obj.getString("name"));
+                    }
+                    if (i==stationArray.length()-1){
+                        targetStation.setText(obj.getString("name"));
+                    }
                     String str,strOut;
                     str=obj.getString("name");
                     if(str.length() > 7)
@@ -310,6 +317,7 @@ public class HomeFragment extends Fragment {
                     path.add(point);
 
                 }
+
                 Log.i("stationNamesStrings",stationNamesStrings.toString());
                 return  path;
             }
@@ -327,7 +335,7 @@ public class HomeFragment extends Fragment {
         StringRequest stringRequest=new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                String str=response.substring(0);
+                String str=response;
                 List<GeoPoint>pathPoint=new ArrayList<>();
                 pathPoint=getStationFromJson(str);
                 Polyline myPath=new Polyline(map);
@@ -335,6 +343,7 @@ public class HomeFragment extends Fragment {
                 myPath.setColor(Color.CYAN);
                 map.getOverlayManager().add(myPath);
                 map.invalidate();
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -354,6 +363,7 @@ public class HomeFragment extends Fragment {
                 return headers;
             }};
         queue.add(stringRequest);
+
 
     }
 

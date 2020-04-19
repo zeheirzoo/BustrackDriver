@@ -152,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     scanner_Layout.setVisibility(View.GONE);
                     v.setBackgroundResource(R.drawable.ic_fullscreen_black_24dp);
-
                     count=0;
 
                 }
