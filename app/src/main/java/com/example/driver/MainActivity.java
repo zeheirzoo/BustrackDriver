@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,10 +49,13 @@ public class MainActivity extends AppCompatActivity {
     Activity activity;
     TextView scanne_ticket_text;
     boolean b=false;
-    int count=0;
+    boolean isOpen=true;
     ImageButton next,prev,open_scanner;
      MediaPlayer scannerSound,errorSound;
     RelativeLayout scanner_Layout;
+    MyTextToSpeak myTextToSpeak;
+   MediaPlayer bipSmok ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
         activity=this;
         getSupportActionBar().hide();
         if (!CheckPermissions())RequestPermissions();
+
+        myTextToSpeak=new MyTextToSpeak(this);
+        bipSmok = MediaPlayer.create(this, R.raw.zxing_beep);
+
 
         fragmentManager=getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame_content,new HomeFragment()).commit();
@@ -139,43 +147,66 @@ public class MainActivity extends AppCompatActivity {
                 mCodeScanner.startPreview();
             }
         });
-
+        openScanner(isOpen);
         open_scanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (count==0){
-                    scanner_Layout.setVisibility(View.VISIBLE);
-                    v.setBackgroundResource(R.drawable.ic_close);
-                    count=1;
-
-                }
-                else {
-                    scanner_Layout.setVisibility(View.GONE);
-                    v.setBackgroundResource(R.drawable.ic_fullscreen_black_24dp);
-                    count=0;
-
-                }
-
+                openScanner(isOpen);
             }
         });
 
 
     }
 
+public void openScanner(boolean b){
 
+    if (b){
+        scanner_Layout.setVisibility(View.VISIBLE);
+        open_scanner.setBackgroundResource(R.drawable.ic_close);
+        mCodeScanner.startPreview();
+
+    }
+    else {
+        scanner_Layout.setVisibility(View.GONE);
+        open_scanner.setBackgroundResource(R.drawable.ic_fullscreen_black_24dp);
+        mCodeScanner.stopPreview();
+    }
+    isOpen=!isOpen;
+}
 
 
     public void onClickItem(View view) {
+
         int itemIndex=view.getId();
         fragmentTransaction =getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_out);
         if (itemIndex==R.id.nav_home)fragmentTransaction.replace(R.id.frame_content,new HomeFragment()).addToBackStack( "pager" );
         if (itemIndex==R.id.nav_alert)fragmentTransaction.replace(R.id.frame_content,new AlertFragment()).addToBackStack( "pager" );
-        if (itemIndex==R.id.nav_search)fragmentTransaction.replace(R.id.frame_content,new SearchFragment()).addToBackStack( "pager" );
-        if (itemIndex==R.id.nav_settings)fragmentTransaction.replace(R.id.frame_content,new SettingsFragment()).addToBackStack( "pager" );
+
         if (itemIndex==R.id.nav_help)fragmentTransaction.replace(R.id.frame_content,new HelpFragment()).addToBackStack( "pager" );
         if (itemIndex==R.id.nav_profile)fragmentTransaction.replace(R.id.frame_content,new ProfileFragment()).addToBackStack( "pager" );
         fragmentTransaction.commit();
+
+
+        if (itemIndex==R.id.nav_place){
+            myTextToSpeak.speakOut("Avancer vers le fond du bus",bipSmok);
+            Toast.makeText(this, "Avancer vers le fond du bus", Toast.LENGTH_SHORT).show();
+        }
+        if (itemIndex==R.id.nav_smoke){
+            myTextToSpeak.speakOut("le tabac est interdit",bipSmok);
+            Toast.makeText(this, "le tabac est interdit", Toast.LENGTH_SHORT).show();
+
+        }
+        if (itemIndex==R.id.nav_silence){
+            myTextToSpeak.speakOut("Veuillez SVP respecter le silence",bipSmok);
+            Toast.makeText(this, "Veuillez SVP respecter le silence", Toast.LENGTH_SHORT).show();
+
+
+        }
+
+
+
+        if (itemIndex==R.id.nav_logout)fragmentTransaction.replace(R.id.frame_content,new SettingsFragment()).addToBackStack( "pager" );
 
     }
 

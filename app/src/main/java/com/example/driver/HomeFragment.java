@@ -59,6 +59,7 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +92,9 @@ public class HomeFragment extends Fragment {
     String provider;
     ArrayList<String> stationNamesStrings;
     TextView startStation,targetStation;
+    int CurrentStation=1;
+
+    MyTextToSpeak myTextToSpeak;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -112,6 +116,7 @@ public class HomeFragment extends Fragment {
         lineLayout=view.findViewById(R.id.line_layout);
         startStation=view.findViewById(R.id.start);
         targetStation=view.findViewById(R.id.target);
+        mapButton.setBackgroundColor(Color.GRAY);
 
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,7 +140,6 @@ public class HomeFragment extends Fragment {
                 mapLayout.setVisibility(View.GONE);
                 mapButton.setText("");
                 lineButton.setText("Line");
-
                 lineLayout.setVisibility(View.VISIBLE);
 //                onClick2(v);
 
@@ -144,15 +148,13 @@ public class HomeFragment extends Fragment {
 //
         //========================================== line ===============================
         statusViewScroller =view.findViewById(R.id.status_view);
-        statusViewScroller.getStatusView().setMinStatusAdjacentMargin(0);
+//        stationDetector();
         Button next =view.findViewById(R.id.next);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                statusViewScroller.scrollBy(180,0);
-//                Toast.makeText(getContext(), statusViewScroller.getStatusView().getMinStatusAdjacentMargin()+"", Toast.LENGTH_SHORT).show();
-                statusViewScroller.getStatusView().setCurrentCount( statusViewScroller.getStatusView().getCurrentCount()+1);
-
+                if (statusViewScroller.getStatusView().getCurrentCount()<statusViewScroller.getStatusView().getStepCount())
+                goToNextStation();
             }
         });
 
@@ -160,9 +162,9 @@ public class HomeFragment extends Fragment {
         prev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                statusViewScroller.scrollBy(-180,0);
-//                Toast.makeText(getContext(), statusViewScroller.getStatusView().getMinStatusAdjacentMargin()/4+"", Toast.LENGTH_SHORT).show();
-                statusViewScroller.getStatusView().setCurrentCount( statusViewScroller.getStatusView().getCurrentCount()-1);
+
+                if (statusViewScroller.getStatusView().getCurrentCount()>2)
+                goToPreviousStation();
             }
         });
         //========================================== line ===============================
@@ -235,8 +237,8 @@ public class HomeFragment extends Fragment {
             mapController.setZoom(15.0);
             map.setBuiltInZoomControls(false);
             startMarker = new Marker(map);
-            startMarker.setIcon(getResources().getDrawable(R.drawable.ic_location));
             map.getOverlays().add(startMarker);
+
 
 
             if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -269,7 +271,10 @@ public class HomeFragment extends Fragment {
                     //            altitude = location.getAltitude();
                     myLocalPoint = new GeoPoint(latitude, longitude);
                     mapController.setCenter(myLocalPoint);
+                    startMarker.setIcon(getResources().getDrawable(R.drawable.ic_location));
                     startMarker.setPosition(myLocalPoint);
+
+                    map.getOverlays().add(startMarker);
                 }
                 @Override public void onStatusChanged(String provider, int status, Bundle extras) {
 
@@ -291,26 +296,31 @@ public class HomeFragment extends Fragment {
                 Log.i("jsonObj", ""+jsonObj);
 
                 JSONArray stationArray = jsonObj.getJSONArray("station");
-                for(int i=0; i < stationArray.length(); i++){
+//                for(int i=0; i < stationArray.length(); i++){
+                for(int i=0; i < 10; i++){
                     JSONObject obj = (JSONObject) stationArray.get(i);
                     GeoPoint point= new GeoPoint(obj.getDouble("latitude"),
                             obj.getDouble("longitude"));
-                    if(i==0){
-                        startStation.setText(obj.getString("name"));
-                    }
-                    if (i==stationArray.length()-1){
-                        targetStation.setText(obj.getString("name"));
-                    }
+
                     String str,strOut;
                     str=obj.getString("name");
-                    if(str.length() > 7)
-                        strOut = str.substring(0,7) + "...";
+                    if(str.length() > 15)
+                        strOut = str.substring(0,15) + "...";
                     else  strOut=str;
+                    if (i==0)
+                    startStation.setText(str);
+                    if (i==9)
+                    targetStation.setText(str);
+
 
                     stationNamesStrings.add(strOut);
-                    stationNamesStrings.add("");
-                    stationNamesStrings.add("");
-                    stationNamesStrings.add("");
+
+
+                    if(i<9){
+                        stationNamesStrings.add("");
+                        stationNamesStrings.add("");
+                        stationNamesStrings.add("");
+                    }
                     statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
                     statusViewScroller.getStatusView().setMinStatusAdjacentMargin(20);
                     statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
@@ -368,4 +378,69 @@ public class HomeFragment extends Fragment {
     }
 
 
+
+    public void goToNextStation(){
+        CurrentStation=statusViewScroller.getStatusView().getCurrentCount();
+        if (CurrentStation>2){
+            statusViewScroller.scrollToStep(CurrentStation-1);
+        }
+        statusViewScroller.getStatusView().setCurrentCount( CurrentStation+1);
+        stationDetector();
+    }
+
+    public void goToPreviousStation(){
+        CurrentStation=statusViewScroller.getStatusView().getCurrentCount();
+        if (CurrentStation>3){
+            statusViewScroller.scrollToStep(CurrentStation-3);
+        }
+        statusViewScroller.getStatusView().setCurrentCount( CurrentStation-1);
+        stationDetector();
+    }
+
+
+
+    public void stationDetector() {
+
+        myTextToSpeak=new MyTextToSpeak(getContext());
+        final MediaPlayer bip = MediaPlayer.create(getContext(), R.raw.zxing_beep);
+
+        if (statusViewScroller.getStatusView().getCurrentCount()==statusViewScroller.getStatusView().getStepCount()){
+
+            myTextToSpeak.speakOut("Station " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount()-1), bip);
+            myTextToSpeak.speakOut("the end of our travel take care ", null);
+            Toasty.success(getContext(), "لمحطة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount()-1)).show();
+            ((MainActivity) getActivity()).openScanner(false);
+
+
+
+            Collections.reverse((List) stationNamesStrings);
+            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
+            statusViewScroller.getStatusView().setCurrentCount(1);
+            statusViewScroller.scrollToStep(1);
+            startStation.setText(stationNamesStrings.get(0)+"");
+            targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
+
+
+
+
+        }else {
+            if (!stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 2).isEmpty() && stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1).isEmpty()) {
+                //            Toasty.success(getContext(), "الانطلاق محطة " +"\n "+stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount())).show();
+                ((MainActivity) getActivity()).openScanner(false);
+
+            }
+            if (!stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount()).isEmpty()) {
+                myTextToSpeak.speakOut(" next station " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount()), bip);
+                Toasty.success(getContext(), "المحطة القادمة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount())).show();
+                ((MainActivity) getActivity()).openScanner(true);
+
+            }
+            if (!stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1).isEmpty()) {
+                myTextToSpeak.speakOut("Station " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1), bip);
+                Toasty.success(getContext(), "محطة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)).show();
+                ((MainActivity) getActivity()).openScanner(true);
+            }
+        }
+
+    }
 }

@@ -3,9 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/move"
+    android:background="@color/colorPrimary"
+    android:padding="20dp"
     tools:context=".HelpFragment">
 
 
+
+    <EditText
+        android:id="@+id/txtText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="write a text to read"
+        android:gravity="start"
+        android:padding="20dp"
+        android:background="@drawable/bg_challenge"
+        android:layout_above="@id/btnSpeak"
+        android:textSize="20dp"/>
+    <Button
+        android:layout_width="match_parent"
+        android:background="@drawable/login_button"
+        android:text=" read "
+        android:textColor="@color/white"
+        android:id="@+id/btnSpeak"
+        android:textSize="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_height="100dp"/>
 
 </RelativeLayout>

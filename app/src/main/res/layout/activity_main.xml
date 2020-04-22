@@ -27,13 +27,13 @@
             android:layout_alignParentRight="true"
             android:layout_margin="10dp"
             android:padding="10dp"
-            android:elevation="100dp"
+            android:elevation="10dp"
 
             android:layout_height="wrap_content">
             <ImageButton
                 android:id="@+id/open_scanner"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:background="@drawable/ic_fullscreen_black_24dp"
                 />
         </RelativeLayout>
@@ -42,18 +42,18 @@
 
 <RelativeLayout
     android:id="@+id/scanner"
-    android:layout_width="300dp"
+    android:layout_width="150dp"
     android:layout_above="@id/scroll_menu"
     android:background="@color/gray"
     android:layout_margin="1dp"
     android:layout_alignParentTop="true"
-    android:layout_alignParentRight="true"
     android:visibility="gone"
+    android:layout_alignParentRight="true"
     android:layout_height="wrap_content">
     <com.budiyev.android.codescanner.CodeScannerView
         android:id="@+id/scanner_view"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginTop="2dp"
         android:elevation="10dp"
         app:autoFocusButtonColor="@color/white"
@@ -64,16 +64,16 @@
         app:frameAspectRatioWidth="1"
         app:frameColor="@color/white"
         app:frameCornersRadius="5dp"
-        app:frameCornersSize="100dp"
+        app:frameCornersSize="50dp"
         app:frameSize="0.9"
-        app:frameThickness="16dp"
+        app:frameThickness="10dp"
         app:maskColor="#6D85BBE6" />
 
-    
-    
-    
 
-    
+
+
+
+
 <RelativeLayout
     android:layout_below="@id/scanner_view"
     android:layout_width="match_parent"
@@ -83,7 +83,7 @@
         android:layout_centerInParent="true"
         android:textColor="@color/white"
         android:text="scanner voter ticket"
-android:textSize="30dp"
+android:textSize="20dp"
         android:textStyle="bold"
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
@@ -129,7 +129,8 @@ android:textSize="30dp"
 
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="20dp"/>
+                
+                android:textSize="15dp" />
         </LinearLayout>
 
 
@@ -162,7 +163,8 @@ android:textSize="30dp"
              android:padding="10dp"
              android:textColor="@color/white"
              android:textStyle="bold"
-             android:textSize="20dp"/>
+             
+                android:textSize="15dp" />
      </LinearLayout>
 
 
@@ -186,7 +188,7 @@ android:textSize="30dp"
                 android:text="Zwaghi"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="30dp"/>
+                android:textSize="20dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -199,8 +201,8 @@ android:textSize="30dp"
                 android:textSize="25dp"/>
 
             <ImageView
-                android:layout_width="100dp"
-                android:layout_height="200dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/ic_check_white"
                 />
@@ -225,12 +227,12 @@ android:textSize="30dp"
             android:text="Error"
             android:textColor="@color/white"
             android:textStyle="bold"
-            android:textSize="30dp"/>
+            android:textSize="20dp"/>
 
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="200dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_close"
             />
@@ -243,7 +245,7 @@ android:textSize="30dp"
         android:onClick="onClickItem"
         android:id="@+id/prev"
         android:layout_width="120dp"
-        android:layout_height="200dp"
+        android:layout_height="120dp"
         android:layout_marginRight="10dp"
         android:background="@android:color/darker_gray"
         android:layout_alignParentBottom="true"
@@ -256,7 +258,7 @@ android:textSize="30dp"
         android:onClick="onClickItem"
         android:id="@+id/next"
         android:layout_width="120dp"
-        android:layout_height="200dp"
+        android:layout_height="120dp"
         android:background="@color/colorPrimaryDark3"
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_arrow_forward_black_50dp"
@@ -267,7 +269,7 @@ android:textSize="30dp"
 
     <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="120dp"
         android:background="#E9FFFFFF"
         android:scrollbars="none"
         android:layout_marginRight="5dp"
@@ -286,7 +288,7 @@ android:textSize="30dp"
             >
 
             <LinearLayout
-                android:layout_width="250dp"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
@@ -308,11 +310,12 @@ android:textSize="30dp"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textStyle="bold"
-                    android:textSize="20dp"
+                    
+                android:textSize="15dp" 
                     android:text="Home"/>
             </LinearLayout>
             <LinearLayout
-                android:layout_width="250dp"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
@@ -336,16 +339,17 @@ android:textSize="30dp"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textStyle="bold"
-                    android:textSize="20dp"
+                    
+                android:textSize="15dp" 
                     android:text="Alert"/>
             </LinearLayout>
             <LinearLayout
-                android:layout_width="250dp"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
                 android:layout_marginRight="10dp"
-                android:id="@+id/nav_search"
+                android:id="@+id/nav_place"
                 android:background="@color/green_light"
                 android:padding="10dp"
 
@@ -363,12 +367,12 @@ android:textSize="30dp"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textStyle="bold"
-                    android:textSize="20dp"
-                    android:text="Avancer vers le fond
-                    du bus"/>
+
+                android:textSize="15dp"
+                    android:text="Avancer vers le fond du bus"/>
             </LinearLayout>
             <LinearLayout
-                android:layout_width="250dp"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
@@ -394,17 +398,18 @@ android:textSize="30dp"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textStyle="bold"
-                    android:textSize="20dp"
+                    
+                android:textSize="15dp" 
                     android:text="Le tabac est
                     interdit "/>
             </LinearLayout>
             <LinearLayout
-                android:layout_width="250dp"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
                 android:layout_marginRight="10dp"
-                android:id="@+id/nav_settings"
+                android:id="@+id/nav_silence"
                 android:background="@color/colorPrimaryDark2"
                 android:padding="10dp"
 
@@ -421,13 +426,14 @@ android:textSize="30dp"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textStyle="bold"
-                    android:textSize="20dp"
+                    
+                android:textSize="15dp" 
                     android:text="Veuillez SVP
                     respecter le silence"/>
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="250dp"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
@@ -450,13 +456,14 @@ android:textSize="30dp"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textStyle="bold"
-                    android:textSize="20dp"
+                    
+                android:textSize="15dp" 
                     android:text="Profile"/>
             </LinearLayout>
 
 
             <LinearLayout
-                android:layout_width="250dp"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
@@ -479,12 +486,13 @@ android:textSize="30dp"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textStyle="bold"
-                    android:textSize="20dp"
+                    
+                android:textSize="15dp" 
                     android:text="help ?"/>
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="250dp"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
@@ -507,7 +515,7 @@ android:textSize="30dp"
                     android:textColor="@color/red"
                     android:gravity="center"
                     android:textStyle="bold"
-                    android:textSize="35dp"
+                    android:textSize="25dp"
                     android:text="Logout"/>
             </LinearLayout>
 
