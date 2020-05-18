@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
@@ -59,11 +60,14 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import es.dmoral.toasty.Toasty;
 import params.com.stepview.StatusView;
 import params.com.stepview.StatusViewScroller;
@@ -93,7 +97,7 @@ public class HomeFragment extends Fragment {
     ArrayList<String> stationNamesStrings;
     TextView startStation,targetStation;
     int CurrentStation=1;
-
+    SweetAlertDialog sweetAlertDialog;
     MyTextToSpeak myTextToSpeak;
     public HomeFragment() {
         // Required empty public constructor
@@ -110,8 +114,8 @@ public class HomeFragment extends Fragment {
 
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         stationNamesStrings=new ArrayList<>();
-         mapButton=view.findViewById(R.id.nav_map);
-         lineButton=view.findViewById(R.id.nav_line);
+        mapButton=view.findViewById(R.id.nav_map);
+        lineButton=view.findViewById(R.id.nav_line);
         mapLayout=view.findViewById(R.id.map_layout);
         lineLayout=view.findViewById(R.id.line_layout);
         startStation=view.findViewById(R.id.start);
@@ -148,7 +152,6 @@ public class HomeFragment extends Fragment {
 //
         //========================================== line ===============================
         statusViewScroller =view.findViewById(R.id.status_view);
-//        stationDetector();
         Button next =view.findViewById(R.id.next);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,6 +170,29 @@ public class HomeFragment extends Fragment {
                 goToPreviousStation();
             }
         });
+
+
+//                ------------currant time------------
+
+
+        final TextView timeTV=view.findViewById(R.id.current_time);
+        final TextView dateTV=view.findViewById(R.id.current_date);
+
+        CountDownTimer newtimer = new CountDownTimer(1000000000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                Calendar c = Calendar.getInstance();
+                timeTV.setText(c.get(Calendar.HOUR_OF_DAY)+":"+c.get(Calendar.MINUTE)+":"+c.get(Calendar.SECOND));
+                dateTV.setText(c.get(Calendar.DAY_OF_MONTH)+"-"+ c.get(Calendar.MONTH)+"-"+c.get(Calendar.YEAR));
+            }
+            public void onFinish() {
+
+            }
+        };
+        newtimer.start();
+//                ------------currant time------------
+
+
         //========================================== line ===============================
 
 
@@ -289,6 +315,8 @@ public class HomeFragment extends Fragment {
 
         }
 
+
+
         public List<GeoPoint>  getStationFromJson(String json){
             try{
                 List<GeoPoint> path = new ArrayList<GeoPoint>();
@@ -397,8 +425,6 @@ public class HomeFragment extends Fragment {
         stationDetector();
     }
 
-
-
     public void stationDetector() {
 
         myTextToSpeak=new MyTextToSpeak(getContext());
@@ -438,9 +464,25 @@ public class HomeFragment extends Fragment {
             if (!stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1).isEmpty()) {
                 myTextToSpeak.speakOut("Station " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1), bip);
                 Toasty.success(getContext(), "محطة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)).show();
+                sweetAlertDialog= new SweetAlertDialog(getActivity(), SweetAlertDialog.spToPx(1000,getActivity()));
+                sweetAlertDialog. setTitleText( "Station"   + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)) .show();
+                timer();
                 ((MainActivity) getActivity()).openScanner(true);
             }
         }
 
     }
+
+
+
+    public void timer(){
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            @Override public void run() {
+                //new intent here
+                sweetAlertDialog.dismiss();
+            }
+        }, 10000);
+    }
+
 }

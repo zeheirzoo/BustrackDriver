@@ -6,43 +6,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".HomeFragment">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:elevation="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content">
-        <Button
-        android:id="@+id/nav_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:padding="20dp"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/white"
-        android:textSize="20dp"
-        android:text="line"
-        android:drawableLeft="@drawable/ic_line"
-        android:drawablePadding="20dp"
-        android:layout_toRightOf="@id/nav_map" />
-        <Button
-            android:id="@+id/nav_map"
+    <RelativeLayout android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="20dp"
-            android:text=""
+            android:elevation="10dp"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/white"
-            android:textSize="20dp"
-            android:drawableLeft="@drawable/ic_map"
-            android:drawablePadding="20dp"
-            />
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/nav_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:padding="20dp"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:text="line"
+                android:drawableLeft="@drawable/ic_line"
+                android:drawablePadding="20dp"
+                android:layout_toRightOf="@id/nav_map" />
+            <Button
+                android:id="@+id/nav_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:padding="20dp"
+                android:text=""
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:drawableLeft="@drawable/ic_map"
+                android:drawablePadding="20dp"
+                />
 
 
-    </LinearLayout>
-
-
+        </LinearLayout>
         <LinearLayout
             android:elevation="10dp"
             android:orientation="horizontal"
@@ -78,212 +80,60 @@
         </LinearLayout>
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorPrimaryDark"
-        android:visibility="visible"
-        android:id="@+id/line_layout">
-
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:padding="20dp"
-            android:gravity="right"
-            android:translationY="-10dp"
-            android:layout_toRightOf="@id/time_layout"
-            >
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="20 Km"
-                    android:textColor="@color/white"
-                    android:textSize="30dp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:drawableLeft="@drawable/ic_directions_black_24dp"
-                    android:drawablePadding="20dp"
-                    android:layout_centerInParent="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="3 mm"
-                    android:textColor="@color/white"
-                    android:textSize="30dp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:drawableLeft="@drawable/ic_timer_black_24dp"
-                    android:drawablePadding="20dp"
-                    android:layout_centerInParent="true" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:padding="20dp"
-            android:layout_toLeftOf="@id/time_layout"
-            >
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="Start"
-                    android:id="@+id/start"
-                    android:textColor="@color/white"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:drawableLeft="@drawable/ic_directions_bus_black_24dp"
-                    android:drawablePadding="20dp"
-                    android:layout_centerInParent="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="5dp"
-                    android:drawableLeft="@drawable/ic_arrow_to_bottom"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="end"
-                    android:textColor="@color/white"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:id="@+id/target"
-                    android:drawableLeft="@drawable/ic_assistant_photo_black_24dp"
-                    android:drawablePadding="20dp"
-                    android:layout_centerInParent="true" />
-            </LinearLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/time_layout"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:padding="20dp"
-            android:translationY="-10dp"
-            android:layout_centerInParent="true">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00:00:00"
-            android:textColor="@color/white"
-            android:textSize="50dp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:drawablePadding="20dp"
-            android:layout_centerInParent="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="jj/mm/aaaa"
-            android:textColor="@color/white"
-            android:textSize="24dp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:drawableLeft="@drawable/ic_date_range_black_24dp"
-            android:drawablePadding="20dp"
-            android:layout_centerInParent="true" />
-    </LinearLayout>
-
-        <params.com.stepview.StatusViewScroller
-            android:id="@+id/status_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="30dp"
-            app:alignStatusWithCurrent="true"
-            app:currentDrawable="@drawable/ic_directions_bus_black_24dp"
-            app:circleColor="@color/red"
-            app:circleColorCurrent="@color/green_light"
-            app:circleColorIncomplete="@color/white"
-            app:circleColorType="fill|stroke"
-            app:circleStrokeColor="@color/white"
-            app:completeDrawable="@drawable/ic_check_white"
-            app:currentCount="1"
-            app:circleStrokeWidth="1dp"
-            app:currentStepZoom="0.6"
-            app:drawLabels="false"
-            app:lineColor="@color/red"
-            app:lineColorCurrent="@color/green_light"
-            app:lineColorIncomplete="#B7B4B7BA"
-            app:lineGap="5dp"
-            app:lineWidth="10dp"
-            app:textColorLabels="@android:color/white"
-            app:textColorLabelsCurrent="@android:color/white"
-            app:textColorStatus="@color/white"
-            app:textSizeStatus="15dp" />
-    </RelativeLayout>
-    <RelativeLayout android:id="@+id/map_layout"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="match_parent">
-
-        <org.osmdroid.views.MapView
-            android:id="@+id/map"
+        <RelativeLayout android:id="@+id/line_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            />
-        <RelativeLayout
-            android:layout_alignParentBottom="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:background="@color/colorPrimaryDark"
+            android:visibility="visible">
+            <include layout="@layout/fragment_line_plan"/>
+        </RelativeLayout>
+        <RelativeLayout android:id="@+id/map_layout"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="match_parent">
 
-            <ImageButton
-                android:id="@+id/zoomin"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_margin="15dp"
-                android:layout_alignParentStart="true"
-                android:background="@drawable/bg_circle"
-                android:src="@drawable/ic_zoom_in_black_24dp"
+            <org.osmdroid.views.MapView
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 />
-            <ImageButton
-                android:id="@+id/zoomout"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_margin="15dp"
-                android:layout_below="@id/zoomin"
-                android:background="@drawable/bg_circle"
-                android:src="@drawable/ic_zoom_out_black_24dp"
-                />
-            <ImageButton
-                android:id="@+id/goToMyLocalisation"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_alignParentStart="true"
-                android:layout_margin="15dp"
-                android:layout_below="@id/zoomout"
-                android:background="@drawable/bg_circle_primary"
-                android:src="@drawable/ic_gps_fixed_black_24dp"
-                />
+            <RelativeLayout
+                android:layout_alignParentBottom="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/zoomin"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="15dp"
+                    android:layout_alignParentStart="true"
+                    android:background="@drawable/bg_circle"
+                    android:src="@drawable/ic_zoom_in_black_24dp"
+                    />
+                <ImageButton
+                    android:id="@+id/zoomout"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="15dp"
+                    android:layout_below="@id/zoomin"
+                    android:background="@drawable/bg_circle"
+                    android:src="@drawable/ic_zoom_out_black_24dp"
+                    />
+                <ImageButton
+                    android:id="@+id/goToMyLocalisation"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_margin="15dp"
+                    android:layout_below="@id/zoomout"
+                    android:background="@drawable/bg_circle_primary"
+                    android:src="@drawable/ic_gps_fixed_black_24dp"
+                    />
+            </RelativeLayout>
+
+
         </RelativeLayout>
 
-
     </RelativeLayout>
-
 </RelativeLayout>

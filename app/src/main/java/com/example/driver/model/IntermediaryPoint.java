@@ -2,46 +2,24 @@ package com.example.driver.model;
 
 import java.util.Date;
 
-public class Station {
-/*
-*  "id": 1,
-    "name": "Ziayadia",
-    "a_b_latitude": 36.37545999999999679630491300486028194427490234375,
-    "a_b_longitude": 6.63656000000000023675283955526538193225860595703125,
-    "a_b_address": null,
-    "b_a_latitude": 36.37545999999999679630491300486028194427490234375,
-    "b_a_longitude": 6.63656000000000023675283955526538193225860595703125,
-    "b_a_address": null,
-    "created_at": "2020-05-15 18:25:25.000000",*/
+public class IntermediaryPoint {
 
     private int id;
-    private String name;
-//    ab Position
+    private int interstation_id;
+    private int order;
     private double a_b_latitude;
     private double a_b_longitude;
     private String a_b_address;
 
-
-//    b-a Position
     private double b_a_latitude;
     private double b_a_longitude;
     private String b_a_address;
-
     private Date create_at;
 
-
-
-    private InterStation srcinterstation;
-    private InterStation destinterstation;
-
-
-    public Station(int id, String name, double a_b_latitude,
-                   double a_b_longitude, String a_b_address,
-                   double b_a_latitude, double b_a_longitude,
-                   String b_a_address, Date create_at,
-                   InterStation srcinterstation, InterStation destinterstation) {
+    public IntermediaryPoint(int id, int interstation_id, int order, double a_b_latitude, double a_b_longitude, String a_b_address, double b_a_latitude, double b_a_longitude, String b_a_address, Date create_at) {
         this.id = id;
-        this.name = name;
+        this.interstation_id = interstation_id;
+        this.order = order;
         this.a_b_latitude = a_b_latitude;
         this.a_b_longitude = a_b_longitude;
         this.a_b_address = a_b_address;
@@ -49,8 +27,6 @@ public class Station {
         this.b_a_longitude = b_a_longitude;
         this.b_a_address = b_a_address;
         this.create_at = create_at;
-        this.srcinterstation = srcinterstation;
-        this.destinterstation = destinterstation;
     }
 
     public int getId() {
@@ -61,12 +37,20 @@ public class Station {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public int getInterstation_id() {
+        return interstation_id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setInterstation_id(int interstation_id) {
+        this.interstation_id = interstation_id;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     public double getA_b_latitude() {
@@ -125,27 +109,12 @@ public class Station {
         this.create_at = create_at;
     }
 
-    public InterStation getSrcinterstation() {
-        return srcinterstation;
-    }
-
-    public void setSrcinterstation(InterStation srcinterstation) {
-        this.srcinterstation = srcinterstation;
-    }
-
-    public InterStation getDestinterstation() {
-        return destinterstation;
-    }
-
-    public void setDestinterstation(InterStation destinterstation) {
-        this.destinterstation = destinterstation;
-    }
-
     @Override
     public String toString() {
-        return "Station{" +
+        return "IntermediaryPoint{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", interstation_id=" + interstation_id +
+                ", order=" + order +
                 ", a_b_latitude=" + a_b_latitude +
                 ", a_b_longitude=" + a_b_longitude +
                 ", a_b_address='" + a_b_address + '\'' +
@@ -153,8 +122,6 @@ public class Station {
                 ", b_a_longitude=" + b_a_longitude +
                 ", b_a_address='" + b_a_address + '\'' +
                 ", create_at=" + create_at +
-                ", srcinterstation=" + srcinterstation +
-                ", destinterstation=" + destinterstation +
                 '}';
     }
 }

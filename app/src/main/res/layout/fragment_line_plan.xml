@@ -4,56 +4,162 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorAccent"
+    android:background="@color/colorPrimaryDark"
     tools:context=".LinePlanFragment">
-    <TextView
-        android:id="@+id/center2"
+
+
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:text="La Line : JBEL ELWAHCH --> NOUVELLE VILLE"
-        android:textColor="@color/white"
-        android:textSize="40dp"
-        android:textStyle="bold"
-        android:layout_centerInParent="true" />
-    <Button
-        android:id="@+id/me"
-        android:background="@drawable/bg_circle_dark"
-        android:translationY="135dp"
-        android:translationX="145dp"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_height="90dp"
-        android:layout_width="90dp"
-        />
+        android:layout_alignParentRight="true"
+        android:padding="20dp"
+        android:gravity="right"
+        android:translationY="-10dp"
+        android:layout_toRightOf="@id/time_layout"
+        >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20 Km"
+                android:textColor="@color/white"
+                android:textSize="30dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:drawableLeft="@drawable/ic_directions_black_24dp"
+                android:drawablePadding="20dp"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3 mm"
+                android:textColor="@color/white"
+                android:textSize="30dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:drawableLeft="@drawable/ic_timer_black_24dp"
+                android:drawablePadding="20dp"
+                android:layout_centerInParent="true" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:padding="20dp"
+        android:layout_toLeftOf="@id/time_layout"
+        >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Start"
+                android:id="@+id/start"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:drawableLeft="@drawable/ic_directions_bus_black_24dp"
+                android:drawablePadding="20dp"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                android:drawableLeft="@drawable/ic_arrow_to_bottom"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="end"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:id="@+id/target"
+                android:drawableLeft="@drawable/ic_assistant_photo_black_24dp"
+                android:drawablePadding="20dp"
+                android:layout_centerInParent="true" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/time_layout"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:padding="20dp"
+        android:translationY="-70dp"
+        android:layout_centerInParent="true">
+        <TextView
+            android:id="@+id/current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00:00"
+            android:textColor="@color/white"
+            android:textSize="50dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:drawablePadding="20dp"
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:id="@+id/current_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="jj/mm/aaaa"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/ic_date_range_black_24dp"
+            android:drawablePadding="10dp"
+            android:layout_centerInParent="true" />
+    </LinearLayout>
 
     <params.com.stepview.StatusViewScroller
         android:id="@+id/status_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/center2"
-        android:layout_centerVertical="true"
-        android:entries="@array/status"
-        android:padding="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="30dp"
         app:alignStatusWithCurrent="true"
+        app:currentDrawable="@drawable/ic_directions_bus_black_24dp"
         app:circleColor="@color/red"
-        app:circleColorCurrent="#3F51B5"
-        app:circleColorIncomplete="@color/gray"
-        app:circleColorType="fillStroke"
+        app:circleColorCurrent="@color/green_light"
+        app:circleColorIncomplete="@color/white"
+        app:circleColorType="fill|stroke"
         app:circleStrokeColor="@color/white"
         app:completeDrawable="@drawable/ic_check_white"
         app:currentCount="1"
-        app:currentStepZoom="0.1"
-        app:drawLabels="true"
+        app:circleStrokeWidth="1dp"
+        app:currentStepZoom="0.6"
+        app:drawLabels="false"
         app:lineColor="@color/red"
-        app:lineColorCurrent="#7AF44336"
+        app:lineColorCurrent="@color/green_light"
         app:lineColorIncomplete="#B7B4B7BA"
-        app:lineGap="0dp"
-        app:lineWidth="15dp"
-        app:minStatusAdjacentMargin="140dp"
-        app:statusTopMargin="30dp"
-        app:stepCount="50"
+        app:lineGap="5dp"
+        app:lineWidth="10dp"
         app:textColorLabels="@android:color/white"
         app:textColorLabelsCurrent="@android:color/white"
         app:textColorStatus="@color/white"
-        app:textSizeLabels="0sp"
-        app:textSizeStatus="35dp" />
+        app:textSizeStatus="15dp" />
 </RelativeLayout>

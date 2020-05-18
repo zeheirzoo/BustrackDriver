@@ -31,24 +31,24 @@ public class LinePlanFragment extends Fragment {
         // Inflate the layout for this fragment
         View root= inflater.inflate(R.layout.fragment_line_plan, container, false);
 
-        statusViewScroller =root.findViewById(R.id.status_view);
-        Button me =root.findViewById(R.id.me);
-        me.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                statusViewScroller.scrollBy(200,0);
-                Toast.makeText(getContext(), "scrol", Toast.LENGTH_SHORT).show();
-            }
-        });
-        me.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                statusViewScroller.scrollBy(-100,0);
-                Toast.makeText(getContext(), "scrol", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
+//        statusViewScroller =root.findViewById(R.id.status_view);
+//        Button me =root.findViewById(R.id.me);
+//        me.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                statusViewScroller.scrollBy(200,0);
+//                Toast.makeText(getContext(), "scrol", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        me.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                statusViewScroller.scrollBy(-100,0);
+//                Toast.makeText(getContext(), "scrol", Toast.LENGTH_SHORT).show();
+//                return true;
+//            }
+//        });
         return root;
     }
 }
