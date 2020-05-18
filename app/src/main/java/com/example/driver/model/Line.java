@@ -1,5 +1,6 @@
 package com.example.driver.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -129,6 +130,39 @@ public class Line {
 
     public void setB_a_station(Station b_a_station) {
         this.b_a_station = b_a_station;
+    }
+
+
+
+    public List<String> getStationsNams() {
+        List<String>strings=new ArrayList<>();
+        for (Station s:station){
+            strings.add((s.getName()));
+            if(s.getId()<station.size()){
+                strings.add("");
+                strings.add("");
+                strings.add("");
+            }
+
+        }
+        return strings;
+    }
+
+    public List<Position> getStationsAndInerStationsPosition() {
+        List<Position>positions=new ArrayList<>();
+        for (Station s:station){
+           Position sPosition=new Position(s.getA_b_address(),s.getA_b_latitude(),s.getA_b_longitude());
+           positions.add(sPosition);
+          if(s.getSrcinterstation().size()>0){
+              for(IntermediaryPoint point : s.getSrcinterstation().get(0).getIntermediary_point()){
+
+                  Position InterS_Position=new Position(point.getA_b_address(),point.getA_b_latitude(),point.getA_b_longitude());
+                  positions.add(sPosition);
+              }
+          }
+
+        }
+        return positions;
     }
 
     @Override

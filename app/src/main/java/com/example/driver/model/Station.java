@@ -1,6 +1,7 @@
 package com.example.driver.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Station {
 /*
@@ -31,15 +32,15 @@ public class Station {
 
 
 
-    private InterStation srcinterstation;
-    private InterStation destinterstation;
+    private List<InterStation> srcinterstation;
+    private  List<InterStation>destinterstation;
 
 
     public Station(int id, String name, double a_b_latitude,
                    double a_b_longitude, String a_b_address,
                    double b_a_latitude, double b_a_longitude,
                    String b_a_address, Date create_at,
-                   InterStation srcinterstation, InterStation destinterstation) {
+                   List<InterStation> srcinterstation, List<InterStation> destinterstation) {
         this.id = id;
         this.name = name;
         this.a_b_latitude = a_b_latitude;
@@ -125,21 +126,26 @@ public class Station {
         this.create_at = create_at;
     }
 
-    public InterStation getSrcinterstation() {
+    public List<InterStation> getSrcinterstation() {
         return srcinterstation;
     }
 
-    public void setSrcinterstation(InterStation srcinterstation) {
+    public void setSrcinterstation(List<InterStation> srcinterstation) {
         this.srcinterstation = srcinterstation;
     }
 
-    public InterStation getDestinterstation() {
+    public List<InterStation> getDestinterstation() {
         return destinterstation;
     }
 
-    public void setDestinterstation(InterStation destinterstation) {
+    public void setDestinterstation(List<InterStation> destinterstation) {
         this.destinterstation = destinterstation;
     }
+
+
+
+
+
 
     @Override
     public String toString() {

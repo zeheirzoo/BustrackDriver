@@ -11,13 +11,19 @@ public class Position {
     private double latitude,longitude;
     private Date created_at;
 
-    public Position(int id, String address,
-                    double latitude, double longitude, Date created_at) {
+    public Position(int id, String address, double latitude, double longitude, Date created_at) {
         this.id = id;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.created_at = created_at;
+    }
+
+    public Position(String address,
+                    double latitude, double longitude) {
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public int getId() {
@@ -68,6 +74,6 @@ public class Position {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", created_at=" + created_at +
-                '}';
+                '}'+"\n";
     }
 }

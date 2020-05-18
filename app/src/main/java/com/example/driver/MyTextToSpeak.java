@@ -55,6 +55,9 @@ public class MyTextToSpeak implements TextToSpeech.OnInitListener {
         }
     }
 
-
+  public void stop(){
+        tts.stop();
+        tts.shutdown();
+  }
 
 }

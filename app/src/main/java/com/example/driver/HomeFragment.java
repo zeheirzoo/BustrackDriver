@@ -31,7 +31,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,6 +49,12 @@ import com.android.volley.toolbox.Volley;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.example.driver.Adapter.LineAdapter;
+import com.example.driver.controller.RetrofitRoutes;
+import com.example.driver.model.Line;
+import com.example.driver.model.Position;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.shuhart.stepview.StepView;
 
 import org.json.JSONArray;
@@ -71,6 +79,10 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import es.dmoral.toasty.Toasty;
 import params.com.stepview.StatusView;
 import params.com.stepview.StatusViewScroller;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.INTERNET;
@@ -82,7 +94,7 @@ public class HomeFragment extends Fragment {
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     Vibrator vibrator;
-    RelativeLayout mapLayout,lineLayout;
+    RelativeLayout mapLayout,lineLayout,main_layout,getLine;
     Handler handler ;
     StatusViewScroller statusViewScroller;
     Button lineButton,mapButton;
@@ -94,11 +106,17 @@ public class HomeFragment extends Fragment {
     double latitude;
     double longitude;
     String provider;
-    ArrayList<String> stationNamesStrings;
+    List<String> stationNamesStrings;
+    List<Position> positionList;
     TextView startStation,targetStation;
     int CurrentStation=1;
     SweetAlertDialog sweetAlertDialog;
     MyTextToSpeak myTextToSpeak;
+
+    GridView line_lv;
+    LineAdapter lineAdapter;
+    List<Line> lines;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -110,6 +128,8 @@ public class HomeFragment extends Fragment {
         View view= inflater.inflate(R.layout.fragment_home, container, false);
         handler = new android.os.Handler();
         fragmentManager=getChildFragmentManager();
+
+        lines=new ArrayList<>();
 //        fragmentManager.beginTransaction().replace(R.id.frame_content_home,new mapsFragment()).commit();
 
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
@@ -117,6 +137,8 @@ public class HomeFragment extends Fragment {
         mapButton=view.findViewById(R.id.nav_map);
         lineButton=view.findViewById(R.id.nav_line);
         mapLayout=view.findViewById(R.id.map_layout);
+        main_layout=view.findViewById(R.id.main_layout);
+        getLine=view.findViewById(R.id.getLine);
         lineLayout=view.findViewById(R.id.line_layout);
         startStation=view.findViewById(R.id.start);
         targetStation=view.findViewById(R.id.target);
@@ -238,8 +260,36 @@ public class HomeFragment extends Fragment {
                 }
             });
 //
+            getAllLine();
 
-       GetRoute();
+
+
+        line_lv =  view.findViewById(R.id.line_lv);
+        line_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                stationNamesStrings=lines.get(position).getStationsNams();
+                positionList=lines.get(position).getStationsAndInerStationsPosition();
+                statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
+                statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
+                 getLine.setVisibility(View.GONE);
+                 main_layout.setVisibility(View.VISIBLE);
+                    startStation.setText(stationNamesStrings.get(0));
+                    targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
+
+
+//                responceTx.setText("Statoin names size : "+ lines.get(position).getStationsNams().size()+"\n"+lines.get(position).getStationsNams().toString()+"\n\n"+
+//                        "Statoin position size : "+lines.get(position).getStationsAndInerStationsPosition().size()+ "\n"+lines.get(position).getStationsAndInerStationsPosition().toString());
+            }
+
+        });
+
+
+
+
+
             return view;
         }
 
@@ -317,93 +367,93 @@ public class HomeFragment extends Fragment {
 
 
 
-        public List<GeoPoint>  getStationFromJson(String json){
-            try{
-                List<GeoPoint> path = new ArrayList<GeoPoint>();
-                JSONObject jsonObj = new JSONObject(json);
-                Log.i("jsonObj", ""+jsonObj);
-
-                JSONArray stationArray = jsonObj.getJSONArray("station");
-//                for(int i=0; i < stationArray.length(); i++){
-                for(int i=0; i < 10; i++){
-                    JSONObject obj = (JSONObject) stationArray.get(i);
-                    GeoPoint point= new GeoPoint(obj.getDouble("latitude"),
-                            obj.getDouble("longitude"));
-
-                    String str,strOut;
-                    str=obj.getString("name");
-                    if(str.length() > 15)
-                        strOut = str.substring(0,15) + "...";
-                    else  strOut=str;
-                    if (i==0)
-                    startStation.setText(str);
-                    if (i==9)
-                    targetStation.setText(str);
-
-
-                    stationNamesStrings.add(strOut);
-
-
-                    if(i<9){
-                        stationNamesStrings.add("");
-                        stationNamesStrings.add("");
-                        stationNamesStrings.add("");
-                    }
-                    statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
-                    statusViewScroller.getStatusView().setMinStatusAdjacentMargin(20);
-                    statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
-                    path.add(point);
-
-                }
-
-                Log.i("stationNamesStrings",stationNamesStrings.toString());
-                return  path;
-            }
-            catch (JSONException e){
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-
-    public void GetRoute(){
-
-        RequestQueue queue= Volley.newRequestQueue(getContext());
-        String url="https://api.jsonbin.io/b/5e980ef7435f5604bb4276e7";
-        StringRequest stringRequest=new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                String str=response;
-                List<GeoPoint>pathPoint=new ArrayList<>();
-                pathPoint=getStationFromJson(str);
-                Polyline myPath=new Polyline(map);
-                myPath.setPoints(pathPoint);
-                myPath.setColor(Color.CYAN);
-                map.getOverlayManager().add(myPath);
-                map.invalidate();
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }) {
-
-            /**
-             * Passing some request headers
-             * */
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String >headers=new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                headers.put("secret-key", "$2b$10$Eo/niSb2cwA8v8ZpdUzv8.gIkLagFk4fzgN8d/imqAKwOHVZJ7Hxm");
-                return headers;
-            }};
-        queue.add(stringRequest);
+//        public List<GeoPoint>  getStationFromJson(String json){
+//            try{
+//                List<GeoPoint> path = new ArrayList<GeoPoint>();
+//                JSONObject jsonObj = new JSONObject(json);
+//                Log.i("jsonObj", ""+jsonObj);
+//
+//                JSONArray stationArray = jsonObj.getJSONArray("station");
+////                for(int i=0; i < stationArray.length(); i++){
+//                for(int i=0; i < 10; i++){
+//                    JSONObject obj = (JSONObject) stationArray.get(i);
+//                    GeoPoint point= new GeoPoint(obj.getDouble("latitude"),
+//                            obj.getDouble("longitude"));
+//
+//                    String str,strOut;
+//                    str=obj.getString("name");
+//                    if(str.length() > 15)
+//                        strOut = str.substring(0,15) + "...";
+//                    else  strOut=str;
+//                    if (i==0)
+//                    startStation.setText(str);
+//                    if (i==9)
+//                    targetStation.setText(str);
+//
+//
+//                    stationNamesStrings.add(strOut);
+//
+//
+//                    if(i<9){
+//                        stationNamesStrings.add("");
+//                        stationNamesStrings.add("");
+//                        stationNamesStrings.add("");
+//                    }
+//                    statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
+//                    statusViewScroller.getStatusView().setMinStatusAdjacentMargin(20);
+//                    statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
+//                    path.add(point);
+//
+//                }
+//
+//                Log.i("stationNamesStrings",stationNamesStrings.toString());
+//                return  path;
+//            }
+//            catch (JSONException e){
+//                e.printStackTrace();
+//                return null;
+//            }
+//        }
 
 
-    }
+//    public void GetRoute(){
+//
+//        RequestQueue queue= Volley.newRequestQueue(getContext());
+//        String url="https://api.jsonbin.io/b/5e980ef7435f5604bb4276e7";
+//        StringRequest stringRequest=new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                String str=response;
+//                List<GeoPoint>pathPoint=new ArrayList<>();
+//                pathPoint=getStationFromJson(str);
+//                Polyline myPath=new Polyline(map);
+//                myPath.setPoints(pathPoint);
+//                myPath.setColor(Color.CYAN);
+//                map.getOverlayManager().add(myPath);
+//                map.invalidate();
+//
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        }) {
+//
+//            /**
+//             * Passing some request headers
+//             * */
+//            @Override
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                Map<String,String >headers=new HashMap<>();
+//                headers.put("Content-Type", "application/json");
+//                headers.put("secret-key", "$2b$10$Eo/niSb2cwA8v8ZpdUzv8.gIkLagFk4fzgN8d/imqAKwOHVZJ7Hxm");
+//                return headers;
+//            }};
+//        queue.add(stringRequest);
+//
+//
+//    }
 
 
 
@@ -464,8 +514,7 @@ public class HomeFragment extends Fragment {
             if (!stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1).isEmpty()) {
                 myTextToSpeak.speakOut("Station " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1), bip);
                 Toasty.success(getContext(), "محطة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)).show();
-                sweetAlertDialog= new SweetAlertDialog(getActivity(), SweetAlertDialog.spToPx(1000,getActivity()));
-                sweetAlertDialog. setTitleText( "Station"   + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)) .show();
+                sweetAlertDialog. setTitleText( "Station "   + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)) .show();
                 timer();
                 ((MainActivity) getActivity()).openScanner(true);
             }
@@ -484,5 +533,56 @@ public class HomeFragment extends Fragment {
             }
         }, 10000);
     }
+
+    private void getAllLine() {
+        Gson gson=new GsonBuilder().serializeNulls().create();
+
+        String url ="http://transport.misc-lab.org/api/";
+        Retrofit retrofit=new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        RetrofitRoutes retrofitRoutes=retrofit.create(RetrofitRoutes.class);
+
+        sweetAlertDialog= new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog. setTitleText("please wait") .show();
+
+
+        Call<List<Line>> call=retrofitRoutes.getLines();
+
+        call.enqueue(new Callback<List<Line>>() {
+            @Override
+            public void onResponse(Call<List<Line>> call, retrofit2.Response<List<Line>> response) {
+                sweetAlertDialog.dismiss();
+                setLines(response.body());
+                lineAdapter=new LineAdapter(getContext(),lines);
+                line_lv.setAdapter(lineAdapter);
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Line>> call, Throwable t) {
+                sweetAlertDialog.dismiss();
+                new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE).setTitleText("Error"+t.getCause()) .show();
+                Log.i("getLine", "onFailure: "+t.getCause());
+            }
+        });
+
+    }
+
+    public void setLines(List<Line> lines) {
+        this.lines = lines;
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        if(myTextToSpeak != null) {
+            myTextToSpeak.stop();
+
+        }
+        super.onDestroyView();
+    }
+
 
 }

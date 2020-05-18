@@ -1,8 +1,11 @@
 package com.example.driver.controller;
 
 import com.example.driver.model.Driver;
+import com.example.driver.model.Line;
 import com.example.driver.model.Ride;
 import com.example.driver.model.User;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -23,4 +26,12 @@ public interface RetrofitRoutes {
 //   ride
     @POST("ride")
     Call<Ride>StartRide(@Body Ride ride);
+
+
+
+    //   ride
+    @GET("line")
+    Call<List<Line>>getLines();
+
+
 }

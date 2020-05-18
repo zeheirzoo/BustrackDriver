@@ -4,13 +4,6 @@ import java.util.Objects;
 
 public class LineType {
 
-//
-//    {
-//        "id": 1,
-//            "line_id": 1,
-//            "name": "Bus",
-//            "code": 25019
-//    }
 
     private int id;
     private String name;

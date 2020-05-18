@@ -146,9 +146,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                 }else {
-                    new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.WARNING_TYPE)
-                            .setTitleText("Email or Password incorrect "+response.body()) .show();
                     sweetAlertDialog.dismiss();
+                    new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("Email or Password incorrect "+response.code()) .show();
 
                 }
             }

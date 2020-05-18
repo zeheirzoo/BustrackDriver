@@ -6,7 +6,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".HomeFragment">
 
+
+    <RelativeLayout
+        android:id="@+id/getLine"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textSize="20dp"
+            android:text="chose line"
+            />
+        <GridView
+            android:layout_below="@id/text"
+            android:numColumns="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/line_lv"/>
+    </RelativeLayout>
+
+
+
     <RelativeLayout android:id="@+id/main_layout"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
