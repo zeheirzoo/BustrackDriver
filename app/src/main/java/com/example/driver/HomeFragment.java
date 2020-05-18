@@ -130,6 +130,8 @@ public class HomeFragment extends Fragment {
         fragmentManager=getChildFragmentManager();
 
         lines=new ArrayList<>();
+        getAllLine();
+
 //        fragmentManager.beginTransaction().replace(R.id.frame_content_home,new mapsFragment()).commit();
 
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
@@ -220,8 +222,39 @@ public class HomeFragment extends Fragment {
 
 //        ++====================================maps =========================================
 
+
+
+
+
+
+
             map = (MapView) view.findViewById(R.id.map);
             ImageButton goToMyLocalisation =  view.findViewById(R.id.goToMyLocalisation);
+
+
+
+        line_lv =  view.findViewById(R.id.line_lv);
+        line_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                stationNamesStrings=lines.get(position).getStationsNams();
+                positionList=lines.get(position).getStationsAndInerStationsPosition();
+                statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
+                statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
+                getLine.setVisibility(View.GONE);
+                main_layout.setVisibility(View.VISIBLE);
+                startStation.setText(stationNamesStrings.get(0));
+                targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
+                GetRoute(positionList);
+
+//                responceTx.setText("Statoin names size : "+ lines.get(position).getStationsNams().size()+"\n"+lines.get(position).getStationsNams().toString()+"\n\n"+
+//                        "Statoin position size : "+lines.get(position).getStationsAndInerStationsPosition().size()+ "\n"+lines.get(position).getStationsAndInerStationsPosition().toString());
+            }
+
+        });
+
 
 
 //        ==================
@@ -253,39 +286,14 @@ public class HomeFragment extends Fragment {
             goToMyLocalisation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    myLocalPoint = new GeoPoint(latitude, longitude);
+                    Position p=positionList.get(statusViewScroller.getStatusView().getCurrentCount()-1);
+                    myLocalPoint = new GeoPoint(p.getLatitude(), p.getLongitude());
                     mapController.setCenter(myLocalPoint);
                     startMarker.setPosition(myLocalPoint);
                     mapController.setZoom(17.0);
                 }
             });
 //
-            getAllLine();
-
-
-
-        line_lv =  view.findViewById(R.id.line_lv);
-        line_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
-                stationNamesStrings=lines.get(position).getStationsNams();
-                positionList=lines.get(position).getStationsAndInerStationsPosition();
-                statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
-                statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
-                 getLine.setVisibility(View.GONE);
-                 main_layout.setVisibility(View.VISIBLE);
-                    startStation.setText(stationNamesStrings.get(0));
-                    targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
-
-
-//                responceTx.setText("Statoin names size : "+ lines.get(position).getStationsNams().size()+"\n"+lines.get(position).getStationsNams().toString()+"\n\n"+
-//                        "Statoin position size : "+lines.get(position).getStationsAndInerStationsPosition().size()+ "\n"+lines.get(position).getStationsAndInerStationsPosition().toString());
-            }
-
-        });
-
 
 
 
@@ -313,6 +321,7 @@ public class HomeFragment extends Fragment {
             mapController.setZoom(15.0);
             map.setBuiltInZoomControls(false);
             startMarker = new Marker(map);
+            startMarker.setIcon(getResources().getDrawable(R.drawable.ic_location));
             map.getOverlays().add(startMarker);
 
 
@@ -361,99 +370,25 @@ public class HomeFragment extends Fragment {
                 @Override public void onProviderDisabled(String provider) { }
 
             };
-            locationManager.requestLocationUpdates(provider,1000,50,locationListener);
+            locationManager.requestLocationUpdates(provider,1000,5,locationListener);
 
         }
 
 
 
-//        public List<GeoPoint>  getStationFromJson(String json){
-//            try{
-//                List<GeoPoint> path = new ArrayList<GeoPoint>();
-//                JSONObject jsonObj = new JSONObject(json);
-//                Log.i("jsonObj", ""+jsonObj);
-//
-//                JSONArray stationArray = jsonObj.getJSONArray("station");
-////                for(int i=0; i < stationArray.length(); i++){
-//                for(int i=0; i < 10; i++){
-//                    JSONObject obj = (JSONObject) stationArray.get(i);
-//                    GeoPoint point= new GeoPoint(obj.getDouble("latitude"),
-//                            obj.getDouble("longitude"));
-//
-//                    String str,strOut;
-//                    str=obj.getString("name");
-//                    if(str.length() > 15)
-//                        strOut = str.substring(0,15) + "...";
-//                    else  strOut=str;
-//                    if (i==0)
-//                    startStation.setText(str);
-//                    if (i==9)
-//                    targetStation.setText(str);
-//
-//
-//                    stationNamesStrings.add(strOut);
-//
-//
-//                    if(i<9){
-//                        stationNamesStrings.add("");
-//                        stationNamesStrings.add("");
-//                        stationNamesStrings.add("");
-//                    }
-//                    statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
-//                    statusViewScroller.getStatusView().setMinStatusAdjacentMargin(20);
-//                    statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
-//                    path.add(point);
-//
-//                }
-//
-//                Log.i("stationNamesStrings",stationNamesStrings.toString());
-//                return  path;
-//            }
-//            catch (JSONException e){
-//                e.printStackTrace();
-//                return null;
-//            }
-//        }
 
+    public void GetRoute(List<Position> positions){
 
-//    public void GetRoute(){
-//
-//        RequestQueue queue= Volley.newRequestQueue(getContext());
-//        String url="https://api.jsonbin.io/b/5e980ef7435f5604bb4276e7";
-//        StringRequest stringRequest=new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//                String str=response;
-//                List<GeoPoint>pathPoint=new ArrayList<>();
-//                pathPoint=getStationFromJson(str);
-//                Polyline myPath=new Polyline(map);
-//                myPath.setPoints(pathPoint);
-//                myPath.setColor(Color.CYAN);
-//                map.getOverlayManager().add(myPath);
-//                map.invalidate();
-//
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        }) {
-//
-//            /**
-//             * Passing some request headers
-//             * */
-//            @Override
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//                Map<String,String >headers=new HashMap<>();
-//                headers.put("Content-Type", "application/json");
-//                headers.put("secret-key", "$2b$10$Eo/niSb2cwA8v8ZpdUzv8.gIkLagFk4fzgN8d/imqAKwOHVZJ7Hxm");
-//                return headers;
-//            }};
-//        queue.add(stringRequest);
-//
-//
-//    }
+        List<GeoPoint>pathPoint=new ArrayList<>();
+        for (Position p : positions){
+            pathPoint.add(new GeoPoint(p.getLatitude(),p.getLongitude()));
+        }
+        Polyline myPath=new Polyline(map);
+        myPath.setPoints(pathPoint);
+        myPath.setColor(Color.CYAN);
+        map.getOverlayManager().add(myPath);
+        map.invalidate();
+    }
 
 
 
