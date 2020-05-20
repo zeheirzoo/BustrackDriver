@@ -14,10 +14,13 @@ public class InterStation {
     private double b_a_distance;
     private int current_station_id;
     private int current_intermediary_point_id;
+    private String a_b_path;
+    private String b_a_path;
     private List<IntermediaryPoint> intermediary_point;
 
 
-    public InterStation(int id, int src_id, int dest_id, int a_b_time, double a_b_distance, int b_a_time, double b_a_distance, int current_station_id, int current_intermediary_point_id, List<IntermediaryPoint> intermediary_point) {
+    public InterStation(int id, int src_id, int dest_id, int a_b_time, double a_b_distance
+            , int b_a_time, double b_a_distance, int current_station_id, int current_intermediary_point_id, String a_b_path, String b_a_path, List<IntermediaryPoint> intermediary_point) {
         this.id = id;
         this.src_id = src_id;
         this.dest_id = dest_id;
@@ -27,6 +30,8 @@ public class InterStation {
         this.b_a_distance = b_a_distance;
         this.current_station_id = current_station_id;
         this.current_intermediary_point_id = current_intermediary_point_id;
+        this.a_b_path = a_b_path;
+        this.b_a_path = b_a_path;
         this.intermediary_point = intermediary_point;
     }
 
@@ -94,6 +99,22 @@ public class InterStation {
         this.current_station_id = current_station_id;
     }
 
+    public String getA_b_path() {
+        return a_b_path;
+    }
+
+    public void setA_b_path(String a_b_path) {
+        this.a_b_path = a_b_path;
+    }
+
+    public String getB_a_path() {
+        return b_a_path;
+    }
+
+    public void setB_a_path(String b_a_path) {
+        this.b_a_path = b_a_path;
+    }
+
     public int getCurrent_intermediary_point_id() {
         return current_intermediary_point_id;
     }
@@ -122,6 +143,8 @@ public class InterStation {
                 ", b_a_distance=" + b_a_distance +
                 ", current_station_id=" + current_station_id +
                 ", current_intermediary_point_id=" + current_intermediary_point_id +
+                ", a_b_path='" + a_b_path + '\'' +
+                ", b_a_path='" + b_a_path + '\'' +
                 ", intermediary_point=" + intermediary_point +
                 '}';
     }

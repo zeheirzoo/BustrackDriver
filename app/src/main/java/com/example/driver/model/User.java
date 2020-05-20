@@ -21,7 +21,7 @@ public class User {
 //        "favorites": [],
 //        "ride": []
 
-    int id,userable_id;
+    int id;
     String username,firstname,lastname,email,password,role,userable_type;
     Date created_at,updated_at;
 
@@ -37,9 +37,8 @@ public class User {
         this.updated_at = updated_at;
     }
 
-    public User(int id, int userable_id, String username, String firstname, String lastname, String email, String password, String role, String userable_type, Date created_at, Date updated_at) {
+    public User(int id, String username, String firstname, String lastname, String email, String password, String role, String userable_type, Date created_at, Date updated_at) {
         this.id = id;
-        this.userable_id = userable_id;
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -56,13 +55,7 @@ public class User {
         this.password = pass;
     }
 
-    public int getUserable_id() {
-        return userable_id;
-    }
 
-    public void setUserable_id(int userable_id) {
-        this.userable_id = userable_id;
-    }
 
     public String getUserable_type() {
         return userable_type;
@@ -148,7 +141,6 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", userable_id=" + userable_id +
                 ", username='" + username + '\'' +
                 ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +

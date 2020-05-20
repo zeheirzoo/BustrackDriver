@@ -1,7 +1,12 @@
 package com.example.driver.model;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -143,10 +148,12 @@ public class Line {
                 strings.add("");
                 strings.add("");
             }
-
         }
         return strings;
     }
+
+
+
 
     public List<Position> getStationsAndInerStationsPosition() {
         List<Position>positions=new ArrayList<>();
@@ -154,14 +161,46 @@ public class Line {
            Position sPosition=new Position(s.getA_b_address(),s.getA_b_latitude(),s.getA_b_longitude());
            positions.add(sPosition);
           if(s.getSrcinterstation().size()>0){
-              for(IntermediaryPoint point : s.getSrcinterstation().get(0).getIntermediary_point()){
-
+              for(IntermediaryPoint point : PointInOrder(s.getSrcinterstation().get(0).getIntermediary_point()) ){
                   Position InterS_Position=new Position(point.getA_b_address(),point.getA_b_latitude(),point.getA_b_longitude());
-                  positions.add(sPosition);
+                  positions.add(InterS_Position);
               }
           }
 
         }
+
+        return positions;
+    }
+    public List<Position> getStationsPosition() {
+        List<Position>positions=new ArrayList<>();
+        for (Station s:station){
+           Position sPosition=new Position(s.getA_b_address(),s.getA_b_latitude(),s.getA_b_longitude());
+           positions.add(sPosition);
+          }
+
+        return positions;
+    }
+    public List<Position> getPathPointList() {
+        List<Position>positions=new ArrayList<>();
+        for (Station s:station){
+            for (InterStation interStation:s.getSrcinterstation()){
+                try {
+                    JSONArray jsonArray=new JSONArray( interStation.getA_b_path());
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        double[] LatLongs= (double[])  jsonArray.get(i);
+                        for (int j = 0; j < LatLongs.length; j++) {
+                            Position sPosition=new Position(null,LatLongs[0],LatLongs[1]);
+                            positions.add(sPosition);
+                        }
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            ;
+          }
+
         return positions;
     }
 
@@ -181,6 +220,23 @@ public class Line {
                 ", a_b_station=" + a_b_station +
                 ", b_a_station=" + b_a_station +
                 '}';
+    }
+
+
+
+    public  List<IntermediaryPoint> PointInOrder(List<IntermediaryPoint> points){
+//
+        Collections.sort(points, new Comparator<IntermediaryPoint>() {
+            @Override
+            public int compare(IntermediaryPoint o1, IntermediaryPoint o2) {
+                return o1.getOrder().compareTo(o2.getOrder());
+            }
+        });
+
+
+        return points;
+
+
     }
 }
 

@@ -17,6 +17,8 @@ public class Station {
 
     private int id;
     private String name;
+
+
 //    ab Position
     private double a_b_latitude;
     private double a_b_longitude;

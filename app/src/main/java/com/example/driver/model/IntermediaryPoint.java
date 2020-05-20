@@ -6,7 +6,7 @@ public class IntermediaryPoint {
 
     private int id;
     private int interstation_id;
-    private int order;
+    private Integer order;
     private double a_b_latitude;
     private double a_b_longitude;
     private String a_b_address;
@@ -45,7 +45,7 @@ public class IntermediaryPoint {
         this.interstation_id = interstation_id;
     }
 
-    public int getOrder() {
+    public Integer getOrder() {
         return order;
     }
 
@@ -109,6 +109,9 @@ public class IntermediaryPoint {
         this.create_at = create_at;
     }
 
+
+
+
     @Override
     public String toString() {
         return "IntermediaryPoint{" +
@@ -124,4 +127,10 @@ public class IntermediaryPoint {
                 ", create_at=" + create_at +
                 '}';
     }
+
+//    @Override
+//    public int compareTo(IntermediaryPoint o) {
+//
+//        return getOrder().compareTo(o.getOrder());
+//    }
 }

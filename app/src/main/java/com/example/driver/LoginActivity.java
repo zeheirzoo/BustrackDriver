@@ -156,6 +156,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Driver> call, Throwable t) {
                 Toast.makeText(LoginActivity.this, "Oops !!  Somme things wrong  :", Toast.LENGTH_SHORT).show();
+                Log.i("login", "onFailure: " +t.getCause());
             }
         });
     }

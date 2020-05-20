@@ -5,12 +5,29 @@ import java.util.Set;
 public class Driver {
 
     int id;
-    int drivinglicense;
+    String drivinglicense;
     User user;
+    String token;
 
     Set<Ride> ride;
 
-    public Driver(int id, int drivinglicense) {
+    public Driver(int id, String drivinglicense, User user, String token, Set<Ride> ride) {
+        this.id = id;
+        this.drivinglicense = drivinglicense;
+        this.user = user;
+        this.token = token;
+        this.ride = ride;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Driver(int id, String drivinglicense) {
         this.id = id;
         this.drivinglicense = drivinglicense;
         this.ride = ride;
@@ -24,11 +41,11 @@ public class Driver {
         this.user = userl;
     }
 
-    public int getDrivinglicense() {
+    public String getDrivinglicense() {
         return drivinglicense;
     }
 
-    public void setDrivinglicense(int drivinglicense) {
+    public void setDrivinglicense(String drivinglicense) {
         this.drivinglicense = drivinglicense;
     }
 //
@@ -54,6 +71,7 @@ public class Driver {
                 "id=" + id +
                 ", drivinglicense=" + drivinglicense +
                 ", user=" + user +
+                ", token='" + token + '\'' +
                 ", ride=" + ride +
                 '}';
     }

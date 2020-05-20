@@ -107,12 +107,14 @@ public class HomeFragment extends Fragment {
     double longitude;
     String provider;
     List<String> stationNamesStrings;
-    List<Position> positionList;
+    List<Position> stationsAndInerStationsPositionList;
+    List<Position> pathPointList;
+    List<Position> stationPositionList;
     TextView startStation,targetStation;
     int CurrentStation=1;
     SweetAlertDialog sweetAlertDialog;
     MyTextToSpeak myTextToSpeak;
-
+String lineColorType;
     GridView line_lv;
     LineAdapter lineAdapter;
     List<Line> lines;
@@ -237,17 +239,28 @@ public class HomeFragment extends Fragment {
         line_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                lineColorType=lines.get(position).getColortype();
 
                 stationNamesStrings=lines.get(position).getStationsNams();
-                positionList=lines.get(position).getStationsAndInerStationsPosition();
+                stationPositionList=lines.get(position).getStationsPosition();
+                stationsAndInerStationsPositionList=lines.get(position).getStationsAndInerStationsPosition();
+                pathPointList=lines.get(position).getPathPointList();
+
                 statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
                 statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
                 getLine.setVisibility(View.GONE);
                 main_layout.setVisibility(View.VISIBLE);
                 startStation.setText(stationNamesStrings.get(0));
                 targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
-                GetRoute(positionList);
+
+
+                Log.i("station", "stationsAndInerStationsPositionList: " +stationsAndInerStationsPositionList.size()+"\n" +
+                        "stationNamesStrings " +stationNamesStrings.size()+"\n" +
+                        "stationPositionList" +stationPositionList.size()+"\n" +
+                        "");
+
+                GetRoute(pathPointList);
+                drawStationMarker(stationPositionList);
 
 //                responceTx.setText("Statoin names size : "+ lines.get(position).getStationsNams().size()+"\n"+lines.get(position).getStationsNams().toString()+"\n\n"+
 //                        "Statoin position size : "+lines.get(position).getStationsAndInerStationsPosition().size()+ "\n"+lines.get(position).getStationsAndInerStationsPosition().toString());
@@ -286,7 +299,7 @@ public class HomeFragment extends Fragment {
             goToMyLocalisation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Position p=positionList.get(statusViewScroller.getStatusView().getCurrentCount()-1);
+                    Position p=stationsAndInerStationsPositionList.get(statusViewScroller.getStatusView().getCurrentCount()-1);
                     myLocalPoint = new GeoPoint(p.getLatitude(), p.getLongitude());
                     mapController.setCenter(myLocalPoint);
                     startMarker.setPosition(myLocalPoint);
@@ -321,7 +334,7 @@ public class HomeFragment extends Fragment {
             mapController.setZoom(15.0);
             map.setBuiltInZoomControls(false);
             startMarker = new Marker(map);
-            startMarker.setIcon(getResources().getDrawable(R.drawable.ic_location));
+            startMarker.setIcon(getResources().getDrawable(R.drawable.ic_location_bus_24dp));
             map.getOverlays().add(startMarker);
 
 
@@ -356,7 +369,6 @@ public class HomeFragment extends Fragment {
                     //            altitude = location.getAltitude();
                     myLocalPoint = new GeoPoint(latitude, longitude);
                     mapController.setCenter(myLocalPoint);
-                    startMarker.setIcon(getResources().getDrawable(R.drawable.ic_location));
                     startMarker.setPosition(myLocalPoint);
 
                     map.getOverlays().add(startMarker);
@@ -374,7 +386,15 @@ public class HomeFragment extends Fragment {
 
         }
 
-
+    public void drawStationMarker(List<Position> stationPosition){
+       for (Position p:stationPosition){
+           Marker stationMarker = new Marker(map);
+           stationMarker.setIcon(getResources().getDrawable(R.mipmap.ic_bus_station_round));
+           stationMarker.setTitle(p.getAddress());
+           stationMarker.setPosition(new GeoPoint(p.getLatitude(),p.getLongitude()));
+           map.getOverlays().add(stationMarker);
+       }
+    }
 
 
     public void GetRoute(List<Position> positions){
@@ -385,7 +405,8 @@ public class HomeFragment extends Fragment {
         }
         Polyline myPath=new Polyline(map);
         myPath.setPoints(pathPoint);
-        myPath.setColor(Color.CYAN);
+        myPath.setColor(Color.parseColor(lineColorType));
+        myPath.setWidth((float) 8);
         map.getOverlayManager().add(myPath);
         map.invalidate();
     }
@@ -396,8 +417,14 @@ public class HomeFragment extends Fragment {
         CurrentStation=statusViewScroller.getStatusView().getCurrentCount();
         if (CurrentStation>2){
             statusViewScroller.scrollToStep(CurrentStation-1);
+
         }
+        Position p =stationsAndInerStationsPositionList.get(statusViewScroller.getStatusView().getCurrentCount());
+        myLocalPoint=new GeoPoint(p.getLatitude(),p.getLongitude());
+        startMarker.setPosition(myLocalPoint);
+        mapController.setCenter(myLocalPoint);
         statusViewScroller.getStatusView().setCurrentCount( CurrentStation+1);
+        map.invalidate();
         stationDetector();
     }
 
@@ -406,7 +433,13 @@ public class HomeFragment extends Fragment {
         if (CurrentStation>3){
             statusViewScroller.scrollToStep(CurrentStation-3);
         }
+        Position p =stationsAndInerStationsPositionList.get(CurrentStation-1);
+        myLocalPoint=new GeoPoint(p.getLatitude(),p.getLongitude());
+        startMarker.setPosition(myLocalPoint);
+        mapController.setCenter(myLocalPoint);
         statusViewScroller.getStatusView().setCurrentCount( CurrentStation-1);
+        map.invalidate();
+
         stationDetector();
     }
 
@@ -421,15 +454,23 @@ public class HomeFragment extends Fragment {
             myTextToSpeak.speakOut("the end of our travel take care ", null);
             Toasty.success(getContext(), "لمحطة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount()-1)).show();
             ((MainActivity) getActivity()).openScanner(false);
+            new SweetAlertDialog(getContext(),SweetAlertDialog.SUCCESS_TYPE)
+                    .setTitleText("the end of our travel ")
+                    .setConfirmButton("getnew ride ", new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
 
+                            Collections.reverse((List) stationNamesStrings);
+                            Collections.reverse((List) stationsAndInerStationsPositionList);
+                            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
+                            statusViewScroller.getStatusView().setCurrentCount(1);
+                            statusViewScroller.scrollToStep(1);
+                            startStation.setText(stationNamesStrings.get(0)+"");
+                            targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
 
+                        }
+                    });
 
-            Collections.reverse((List) stationNamesStrings);
-            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
-            statusViewScroller.getStatusView().setCurrentCount(1);
-            statusViewScroller.scrollToStep(1);
-            startStation.setText(stationNamesStrings.get(0)+"");
-            targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
 
 
 
@@ -449,15 +490,13 @@ public class HomeFragment extends Fragment {
             if (!stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1).isEmpty()) {
                 myTextToSpeak.speakOut("Station " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1), bip);
                 Toasty.success(getContext(), "محطة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)).show();
-                sweetAlertDialog. setTitleText( "Station "   + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)) .show();
+//                sweetAlertDialog. setTitleText( "Station "   + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)) .show();
                 timer();
                 ((MainActivity) getActivity()).openScanner(true);
             }
         }
 
     }
-
-
 
     public void timer(){
         Handler h = new Handler();
@@ -518,6 +557,9 @@ public class HomeFragment extends Fragment {
         }
         super.onDestroyView();
     }
+
+
+
 
 
 }
