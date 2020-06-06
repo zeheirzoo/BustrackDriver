@@ -1,8 +1,9 @@
 package com.example.driver.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Position {
+public class Position implements Serializable {
 
 
 

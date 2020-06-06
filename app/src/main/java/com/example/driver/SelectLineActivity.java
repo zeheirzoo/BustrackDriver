@@ -1,23 +1,19 @@
 package com.example.driver;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Context;
-import android.media.MediaPlayer;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.driver.Adapter.LineAdapter;
 import com.example.driver.controller.RetrofitRoutes;
-import com.example.driver.model.Driver;
 import com.example.driver.model.Line;
+import com.example.driver.model.Position;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -27,52 +23,61 @@ import java.util.List;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class test extends Activity{
-    /** Called when the activity is first created. */
-
-    private Button btnSpeak;
-    private EditText txtText;
-    private TextView responceTx;
+public class SelectLineActivity extends AppCompatActivity {
+GridView line_lv;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
+    SharedPreferences linePref;
+    SharedPreferences.Editor lineEditor;
+    List<Line>lines;
+    List<String> stationNamesStrings;
+    List<Position> stationsAndInerStationsPositionList;
+    List<Position> pathPointList;
+    List<Position> stationPositionList;
     SweetAlertDialog sweetAlertDialog;
-    GridView line_lv;
     LineAdapter lineAdapter;
-    List<Line> lines;
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
-        btnSpeak = findViewById(R.id.btnSpeak);
-        responceTx = findViewById(R.id.responceTx);
-        txtText =  findViewById(R.id.txtText);
-
-
+        setContentView(R.layout.activity_select_line);
+getSupportActionBar().hide();
         lines=new ArrayList<>();
-//
-
-        btnSpeak.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getAllLine();
-            }
-        });
+        linePref =getSharedPreferences("linePref", Context.MODE_PRIVATE);
+        lineEditor=linePref.edit();
+        getAllLine();
         line_lv =  findViewById(R.id.line_lv);
-//        line_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//           @Override
-//           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//               responceTx.setText("Statoin names size : "+ lines.get(position).getStationsNams().size()+"\n"+lines.get(position).getStationsNams().toString()+"\n\n"+
-//                       "Statoin position size : "+lines.get(position).getStationsAndInerStationsPosition().size()+ "\n"+lines.get(position).getStationsAndInerStationsPosition().toString());
-//           }
-//
-//        });
+        line_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Line myLine=lines.get(position);
+//                pref
+//                driver_id,vehicle_id,line_id,current_station_id,direction
+                lineEditor.clear();
+                lineEditor.putInt("line_id",myLine.getId());
+                lineEditor.putInt("current_station_id",myLine.getStation().get(0).getId());
+                lineEditor.commit();
+
+
+                ChoseDerectionDialog choseDerectionDialog=new ChoseDerectionDialog(SelectLineActivity.this,myLine,1);
+                choseDerectionDialog.show();
+
+
+
+            }
+
+        });
     }
 
+
+
+
+
+
     private void getAllLine() {
-        Gson gson=new GsonBuilder().serializeNulls().create();
+        Gson gson=new GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS").create();
 
         String url ="http://transport.misc-lab.org/api/";
         Retrofit retrofit=new Retrofit.Builder()
@@ -80,8 +85,8 @@ public class test extends Activity{
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         RetrofitRoutes retrofitRoutes=retrofit.create(RetrofitRoutes.class);
-
-        sweetAlertDialog= new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+//
+        sweetAlertDialog= new SweetAlertDialog(SelectLineActivity.this, SweetAlertDialog.PROGRESS_TYPE);
         sweetAlertDialog. setTitleText("please wait") .show();
 
 
@@ -89,7 +94,7 @@ public class test extends Activity{
 
         call.enqueue(new Callback<List<Line>>() {
             @Override
-            public void onResponse(Call<List<Line>> call, Response<List<Line>> response) {
+            public void onResponse(Call<List<Line>> call, retrofit2.Response<List<Line>> response) {
                 sweetAlertDialog.dismiss();
                 setLines(response.body());
                 lineAdapter=new LineAdapter(getApplicationContext(),lines);
@@ -110,4 +115,5 @@ public class test extends Activity{
     public void setLines(List<Line> lines) {
         this.lines = lines;
     }
+
 }

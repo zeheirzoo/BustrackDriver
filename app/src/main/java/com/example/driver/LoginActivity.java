@@ -50,6 +50,15 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         if (!CheckPermissions())RequestPermissions();
 
+
+        pref =getSharedPreferences("DriverPref", Context.MODE_PRIVATE);
+        if (pref.getInt("id",-1)!=-1){
+
+            startActivity(new Intent(LoginActivity.this, SelectLineActivity.class));
+            finish();
+        }
+
+
         emailET =findViewById(R.id .email);
         passwordET =findViewById(R.id .password);
 
@@ -103,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void login(User c){
 ////
-        Gson gson=new GsonBuilder().serializeNulls().create();
+        Gson gson=new GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS").create();
 
         String url ="http://transport.misc-lab.org/api/";
         Retrofit retrofit=new Retrofit.Builder()
@@ -116,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
         sweetAlertDialog. setTitleText("please wait") .show();
 
 
-        pref =getSharedPreferences("CostumerPref", Context.MODE_PRIVATE);
+        pref =getSharedPreferences("DriverPref", Context.MODE_PRIVATE);
         prefsEditor=pref.edit();
         Call<Driver> login=retrofitRoutes.Login(c);
 
@@ -136,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                         prefsEditor.commit();
 
                         sweetAlertDialog.dismiss();
-                       startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                       startActivity(new Intent(LoginActivity.this, SelectLineActivity.class));
                        finish();
 
                     }else {

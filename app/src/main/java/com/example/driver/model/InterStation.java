@@ -1,9 +1,10 @@
 package com.example.driver.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class InterStation {
+public class InterStation implements Serializable {
 
     private int id;
     private int src_id;

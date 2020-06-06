@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -35,6 +36,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,8 +53,12 @@ import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.example.driver.Adapter.LineAdapter;
 import com.example.driver.controller.RetrofitRoutes;
+import com.example.driver.model.InterStation;
+import com.example.driver.model.IntermediaryPoint;
 import com.example.driver.model.Line;
 import com.example.driver.model.Position;
+import com.example.driver.model.Ride;
+import com.example.driver.model.Station;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.shuhart.stepview.StepView;
@@ -66,10 +72,12 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
+import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +105,8 @@ public class HomeFragment extends Fragment {
     RelativeLayout mapLayout,lineLayout,main_layout,getLine;
     Handler handler ;
     StatusViewScroller statusViewScroller;
-    Button lineButton,mapButton;
+    LinearLayout correct_position;
+    Button lineButton,mapButton,start_ride,next,prev;
     boolean b=false;
     MapView map = null;
     IMapController mapController;
@@ -105,19 +114,31 @@ public class HomeFragment extends Fragment {
     Marker  startMarker;
     double latitude;
     double longitude;
+    ImageButton zoomin,zoomout;
     String provider;
-    List<String> stationNamesStrings;
+    List<String> stationNamesStrings,stationTitle;
     List<Position> stationsAndInerStationsPositionList;
     List<Position> pathPointList;
     List<Position> stationPositionList;
-    TextView startStation,targetStation;
+    TextView startStation,targetStation, timeTV,dateTV;
     int CurrentStation=1;
     SweetAlertDialog sweetAlertDialog;
     MyTextToSpeak myTextToSpeak;
-String lineColorType;
-    GridView line_lv;
-    LineAdapter lineAdapter;
-    List<Line> lines;
+    String lineColorType;
+
+int driver_id;
+int vehicle_id;
+int line_id;
+String direction;
+int current_station_id;
+SharedPreferences pref;
+SharedPreferences.Editor editor;
+SharedPreferences linePref;
+SharedPreferences.Editor lineEditor;
+Line myLine;
+boolean online =false ;
+
+
 
     public HomeFragment() {
         // Required empty public constructor
@@ -131,22 +152,48 @@ String lineColorType;
         handler = new android.os.Handler();
         fragmentManager=getChildFragmentManager();
 
-        lines=new ArrayList<>();
-        getAllLine();
+//============
+        pref =getActivity().getSharedPreferences("DriverPref", Context.MODE_PRIVATE);
+        editor=pref.edit();
+        linePref =getActivity().getSharedPreferences("linePref", Context.MODE_PRIVATE);
+        lineEditor=linePref.edit();
+        Log.i("driverPref", "pref :  "+pref.getAll());
+        Log.i("driverPref2", "line pref :  "+linePref.getAll());
 
-//        fragmentManager.beginTransaction().replace(R.id.frame_content_home,new mapsFragment()).commit();
+//============
+//============
+
+//============
 
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         stationNamesStrings=new ArrayList<>();
         mapButton=view.findViewById(R.id.nav_map);
         lineButton=view.findViewById(R.id.nav_line);
+        start_ride=view.findViewById(R.id.start_ride);
         mapLayout=view.findViewById(R.id.map_layout);
         main_layout=view.findViewById(R.id.main_layout);
+        correct_position=view.findViewById(R.id.correct_position);
         getLine=view.findViewById(R.id.getLine);
         lineLayout=view.findViewById(R.id.line_layout);
         startStation=view.findViewById(R.id.start);
         targetStation=view.findViewById(R.id.target);
+        statusViewScroller=view.findViewById(R.id.status_view);
         mapButton.setBackgroundColor(Color.GRAY);
+        map = (MapView) view.findViewById(R.id.map);
+        ImageButton goToMyLocalisation =  view.findViewById(R.id.goToMyLocalisation);
+
+
+
+        startMarker = new Marker(map);
+        startMarker.setIcon(getResources().getDrawable(R.drawable.ic_location_bus_24dp));
+
+
+        mapController = map.getController();
+        mapController.setZoom(15.0);
+        map.setBuiltInZoomControls(false);
+        map.getOverlays().add(startMarker);
+
+
 
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,7 +201,6 @@ String lineColorType;
                 v.setBackgroundResource(R.color.colorPrimary);
                 mapButton.setText("Maps");
                 lineButton.setText("");
-
                 lineButton.setBackgroundColor(Color.GRAY);
                 mapLayout.setVisibility(View.VISIBLE);
                 lineLayout.setVisibility(View.GONE);
@@ -162,6 +208,7 @@ String lineColorType;
 
             }
         });
+
         lineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,9 +223,24 @@ String lineColorType;
             }
         });
 //
+
+        start_ride.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                driver_id=pref.getInt("id",-1);
+                vehicle_id=1;
+                line_id=linePref.getInt("line_id",-1);
+                current_station_id=linePref.getInt("current_station_id",-1);
+                direction=linePref.getString("direction","a_b");
+                createRide(new Ride(driver_id,vehicle_id,line_id,current_station_id,direction,new Date(),null,new Date()));
+            }
+        });
+
+
         //========================================== line ===============================
         statusViewScroller =view.findViewById(R.id.status_view);
-        Button next =view.findViewById(R.id.next);
+         next =view.findViewById(R.id.next);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,7 +249,7 @@ String lineColorType;
             }
         });
 
-        Button prev =view.findViewById(R.id.prev);
+         prev =view.findViewById(R.id.prev);
         prev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,22 +262,7 @@ String lineColorType;
 
 //                ------------currant time------------
 
-
-        final TextView timeTV=view.findViewById(R.id.current_time);
-        final TextView dateTV=view.findViewById(R.id.current_date);
-
-        CountDownTimer newtimer = new CountDownTimer(1000000000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                Calendar c = Calendar.getInstance();
-                timeTV.setText(c.get(Calendar.HOUR_OF_DAY)+":"+c.get(Calendar.MINUTE)+":"+c.get(Calendar.SECOND));
-                dateTV.setText(c.get(Calendar.DAY_OF_MONTH)+"-"+ c.get(Calendar.MONTH)+"-"+c.get(Calendar.YEAR));
-            }
-            public void onFinish() {
-
-            }
-        };
-        newtimer.start();
+                    currantTimeTimer(view);
 //                ------------currant time------------
 
 
@@ -230,91 +277,125 @@ String lineColorType;
 
 
 
-            map = (MapView) view.findViewById(R.id.map);
-            ImageButton goToMyLocalisation =  view.findViewById(R.id.goToMyLocalisation);
-
-
-
-        line_lv =  view.findViewById(R.id.line_lv);
-        line_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lineColorType=lines.get(position).getColortype();
-
-                stationNamesStrings=lines.get(position).getStationsNams();
-                stationPositionList=lines.get(position).getStationsPosition();
-                stationsAndInerStationsPositionList=lines.get(position).getStationsAndInerStationsPosition();
-                pathPointList=lines.get(position).getPathPointList();
-
-                statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
-                statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
-                getLine.setVisibility(View.GONE);
-                main_layout.setVisibility(View.VISIBLE);
-                startStation.setText(stationNamesStrings.get(0));
-                targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
-
-
-                Log.i("station", "stationsAndInerStationsPositionList: " +stationsAndInerStationsPositionList.size()+"\n" +
-                        "stationNamesStrings " +stationNamesStrings.size()+"\n" +
-                        "stationPositionList" +stationPositionList.size()+"\n" +
-                        "");
-
-                GetRoute(pathPointList);
-                drawStationMarker(stationPositionList);
-
-//                responceTx.setText("Statoin names size : "+ lines.get(position).getStationsNams().size()+"\n"+lines.get(position).getStationsNams().toString()+"\n\n"+
-//                        "Statoin position size : "+lines.get(position).getStationsAndInerStationsPosition().size()+ "\n"+lines.get(position).getStationsAndInerStationsPosition().toString());
-            }
-
-        });
-
 
 
 //        ==================
-            final ImageButton zoomin=view.findViewById(R.id.zoomin);
-            final ImageButton zoomout=view.findViewById(R.id.zoomout);
-            zoomin.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) { if(map.getZoomLevelDouble()==map.getMaxZoomLevel()){
-                    zoomin.setBackground(getResources().getDrawable(R.drawable.bg_circle_dark));
-                } else {   mapController.setZoom(map.getZoomLevelDouble()+1);
-                    zoomout.setBackground(getResources().getDrawable(R.drawable.bg_circle));}     }
-            });
-            zoomout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {if(map.getZoomLevelDouble()==map.getMinZoomLevel()){
-                    zoomout.setBackground(getResources().getDrawable(R.drawable.bg_circle_dark));
-                }else{ mapController.setZoom(map.getZoomLevelDouble()-1);
-                    zoomin.setBackground(getResources().getDrawable(R.drawable.bg_circle));}    }
-            });
+
+         zoomController(view);
 //          ============
 //
             map.setTileSource(TileSourceFactory.MAPNIK);
             map.setMultiTouchControls(true);
             map.setMinZoomLevel(5.0);
 
-
-            locationMethode(getContext());
+        RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(getContext(), map);
+        mRotationGestureOverlay.setEnabled(true);
+        map.setMultiTouchControls(true);
+        map.getOverlays().add(mRotationGestureOverlay);
 //
             goToMyLocalisation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Position p=stationsAndInerStationsPositionList.get(statusViewScroller.getStatusView().getCurrentCount()-1);
+                    Position p=stationPositionList.get(0);
                     myLocalPoint = new GeoPoint(p.getLatitude(), p.getLongitude());
+                    mapController = map.getController();
+                    mapController.animateTo(myLocalPoint);
                     mapController.setCenter(myLocalPoint);
                     startMarker.setPosition(myLocalPoint);
                     mapController.setZoom(17.0);
                 }
             });
+
+//        locationMethode(getContext());
+
+            if (linePref.getBoolean("online",false)){
+            }
+
 //
 
 
 
 
+
+
+
+
+// To retrieve object in second Activity
+        myLine=(Line) getActivity().getIntent().getSerializableExtra("Line");
+        if (myLine!=null){
+            if (linePref.getString("direction","")=="a_b"){
+                getStations(myLine.getStation());
+
+            }else {
+                getStationsB(myLine.getStation());
+            }
+            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
+            statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size()+1);
+
+
+            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
+            statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
+
+            startStation.setText(stationNamesStrings.get(0));
+            targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
+
+            Position p=stationPositionList.get(0);
+            myLocalPoint = new GeoPoint(p.getLatitude(), p.getLongitude());
+            lineColorType=myLine.getColortype();
+            mapController = map.getController();
+            mapController.setCenter(myLocalPoint);
+            startMarker.setPosition(myLocalPoint);
+            mapController.setZoom(17.0);
+
+            GetRoute(pathPointList);
+            drawStationMarker(stationPositionList);
+
+
+
+        }else {
+            new SweetAlertDialog(getContext(),SweetAlertDialog.ERROR_TYPE).setTitleText("my line  "+myLine).show();
+        }
+
             return view;
         }
 
-        public void locationMethode(Context ctx) {
+    private void currantTimeTimer(View view) {
+         timeTV=view.findViewById(R.id.current_time);
+         dateTV=view.findViewById(R.id.current_date);
+        CountDownTimer newtimer = new CountDownTimer(1000000000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                Calendar c = Calendar.getInstance();
+                timeTV.setText(c.get(Calendar.HOUR_OF_DAY)+":"+c.get(Calendar.MINUTE)+":"+c.get(Calendar.SECOND));
+                dateTV.setText(c.get(Calendar.DAY_OF_MONTH)+"-"+ c.get(Calendar.MONTH)+"-"+c.get(Calendar.YEAR));
+            }
+            public void onFinish() {
+
+            }
+        };
+        newtimer.start();
+    }
+
+    private void zoomController(View view) {
+        zoomin=view.findViewById(R.id.zoomin);
+        zoomout=view.findViewById(R.id.zoomout);
+        zoomin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { if(map.getZoomLevelDouble()==map.getMaxZoomLevel()){
+                zoomin.setBackground(getResources().getDrawable(R.drawable.bg_circle_dark));
+            } else {   mapController.setZoom(map.getZoomLevelDouble()+1);
+                zoomout.setBackground(getResources().getDrawable(R.drawable.bg_circle));}     }
+        });
+        zoomout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {if(map.getZoomLevelDouble()==map.getMinZoomLevel()){
+                zoomout.setBackground(getResources().getDrawable(R.drawable.bg_circle_dark));
+            }else{ mapController.setZoom(map.getZoomLevelDouble()-1);
+                zoomin.setBackground(getResources().getDrawable(R.drawable.bg_circle));}    }
+        });
+    }
+
+    public void locationMethode(Context ctx) {
 
             LocationManager locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
             if (provider != null) {
@@ -330,12 +411,6 @@ String lineColorType;
             } else provider = LocationManager.GPS_PROVIDER;
 
 
-            mapController = map.getController();
-            mapController.setZoom(15.0);
-            map.setBuiltInZoomControls(false);
-            startMarker = new Marker(map);
-            startMarker.setIcon(getResources().getDrawable(R.drawable.ic_location_bus_24dp));
-            map.getOverlays().add(startMarker);
 
 
 
@@ -364,6 +439,16 @@ String lineColorType;
             LocationListener locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
+
+                    Position position=stationsAndInerStationsPositionList.get(statusViewScroller.getStatusView().getCurrentCount());
+                    Location nextStepLocation = new Location(provider);
+                    nextStepLocation.setLatitude(position.getLatitude());
+                    nextStepLocation.setLongitude(position.getLongitude());
+                    float distanceInMeters = location.distanceTo(nextStepLocation);
+                    if (distanceInMeters<20){
+                        goToNextStation();
+                    }
+
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     //            altitude = location.getAltitude();
@@ -372,6 +457,7 @@ String lineColorType;
                     startMarker.setPosition(myLocalPoint);
 
                     map.getOverlays().add(startMarker);
+
                 }
                 @Override public void onStatusChanged(String provider, int status, Bundle extras) {
 
@@ -387,15 +473,15 @@ String lineColorType;
         }
 
     public void drawStationMarker(List<Position> stationPosition){
-       for (Position p:stationPosition){
+       for (int i =0;i<stationPosition.size();i++){
+           Position p=stationPosition.get(i);
            Marker stationMarker = new Marker(map);
            stationMarker.setIcon(getResources().getDrawable(R.mipmap.ic_bus_station_round));
-           stationMarker.setTitle(p.getAddress());
+           stationMarker.setTitle(stationTitle.get(i));
            stationMarker.setPosition(new GeoPoint(p.getLatitude(),p.getLongitude()));
            map.getOverlays().add(stationMarker);
        }
     }
-
 
     public void GetRoute(List<Position> positions){
 
@@ -411,18 +497,17 @@ String lineColorType;
         map.invalidate();
     }
 
-
-
     public void goToNextStation(){
         CurrentStation=statusViewScroller.getStatusView().getCurrentCount();
         if (CurrentStation>2){
             statusViewScroller.scrollToStep(CurrentStation-1);
-
         }
         Position p =stationsAndInerStationsPositionList.get(statusViewScroller.getStatusView().getCurrentCount());
         myLocalPoint=new GeoPoint(p.getLatitude(),p.getLongitude());
         startMarker.setPosition(myLocalPoint);
         mapController.setCenter(myLocalPoint);
+        mapController.animateTo(myLocalPoint);
+
         statusViewScroller.getStatusView().setCurrentCount( CurrentStation+1);
         map.invalidate();
         stationDetector();
@@ -436,7 +521,10 @@ String lineColorType;
         Position p =stationsAndInerStationsPositionList.get(CurrentStation-1);
         myLocalPoint=new GeoPoint(p.getLatitude(),p.getLongitude());
         startMarker.setPosition(myLocalPoint);
+
         mapController.setCenter(myLocalPoint);
+        mapController.animateTo(myLocalPoint);
+
         statusViewScroller.getStatusView().setCurrentCount( CurrentStation-1);
         map.invalidate();
 
@@ -452,28 +540,24 @@ String lineColorType;
 
             myTextToSpeak.speakOut("Station " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount()-1), bip);
             myTextToSpeak.speakOut("the end of our travel take care ", null);
-            Toasty.success(getContext(), "لمحطة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount()-1)).show();
+//            Toasty.success(getContext(), "لمحطة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount()-1)).show();
             ((MainActivity) getActivity()).openScanner(false);
             new SweetAlertDialog(getContext(),SweetAlertDialog.SUCCESS_TYPE)
                     .setTitleText("the end of our travel ")
                     .setConfirmButton("getnew ride ", new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
-
-                            Collections.reverse((List) stationNamesStrings);
-                            Collections.reverse((List) stationsAndInerStationsPositionList);
-                            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
-                            statusViewScroller.getStatusView().setCurrentCount(1);
-                            statusViewScroller.scrollToStep(1);
-                            startStation.setText(stationNamesStrings.get(0)+"");
-                            targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
+sweetAlertDialog.dismiss();
+//                            Collections.reverse((List) stationNamesStrings);
+//                            Collections.reverse((List) stationsAndInerStationsPositionList);
+//                            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
+//                            statusViewScroller.getStatusView().setCurrentCount(1);
+//                            statusViewScroller.scrollToStep(1);
+//                            startStation.setText(stationNamesStrings.get(0)+"");
+//                            targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
 
                         }
-                    });
-
-
-
-
+                    }).show();
 
         }else {
             if (!stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 2).isEmpty() && stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1).isEmpty()) {
@@ -508,8 +592,9 @@ String lineColorType;
         }, 10000);
     }
 
-    private void getAllLine() {
-        Gson gson=new GsonBuilder().serializeNulls().create();
+    private void createRide(final Ride ride) {
+        Gson gson=new GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS").create();
+
 
         String url ="http://transport.misc-lab.org/api/";
         Retrofit retrofit=new Retrofit.Builder()
@@ -522,33 +607,39 @@ String lineColorType;
         sweetAlertDialog. setTitleText("please wait") .show();
 
 
-        Call<List<Line>> call=retrofitRoutes.getLines();
 
-        call.enqueue(new Callback<List<Line>>() {
+        Call<Ride> call=retrofitRoutes.StartRide(ride);
+
+        call.enqueue(new Callback<Ride>() {
             @Override
-            public void onResponse(Call<List<Line>> call, retrofit2.Response<List<Line>> response) {
-                sweetAlertDialog.dismiss();
-                setLines(response.body());
-                lineAdapter=new LineAdapter(getContext(),lines);
-                line_lv.setAdapter(lineAdapter);
+            public void onResponse(Call<Ride> call, retrofit2.Response<Ride> response) {
+             if(response.isSuccessful()){
+                  sweetAlertDialog.dismiss();
+                  new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE).setTitleText("StART Ride SUCCESSFUL") .show();
 
+                  start_ride.setVisibility(View.GONE);
+                  correct_position.setVisibility(View.VISIBLE);
+                  lineEditor.putBoolean("online",true);
+                  lineEditor.commit();
+              }
+              else {
+
+                    new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE).setTitleText("StART Ride failed") .show();
+
+
+              }
             }
 
             @Override
-            public void onFailure(Call<List<Line>> call, Throwable t) {
+            public void onFailure(Call<Ride> call, Throwable t) {
                 sweetAlertDialog.dismiss();
                 new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE).setTitleText("Error"+t.getCause()) .show();
-                Log.i("getLine", "onFailure: "+t.getCause());
+                Log.i("driverPref6", "eroor :  "+t.getCause());
+
+
             }
         });
-
     }
-
-    public void setLines(List<Line> lines) {
-        this.lines = lines;
-    }
-
-
     @Override
     public void onDestroyView() {
         if(myTextToSpeak != null) {
@@ -558,6 +649,143 @@ String lineColorType;
         super.onDestroyView();
     }
 
+
+
+
+
+    public void getStations(List<Station>stations) {
+        stationNamesStrings=new ArrayList<>();
+        stationTitle=new ArrayList<>();
+        stationsAndInerStationsPositionList=new ArrayList<>();
+        stationPositionList=new ArrayList<>();
+        pathPointList=new ArrayList<>();
+        for (Station s:stations){
+            if (s.getA_b_latitude()!=0.0){
+                List<InterStation>interStationList=new ArrayList<>();
+                interStationList=s.getSrcinterstation();
+
+                    stationNamesStrings.add((s.getName()));
+                    stationTitle.add((s.getName()));
+                    if(!s.equals(stations.get(stations.size()-1))){
+                        stationNamesStrings.add("");
+                        stationNamesStrings.add("");
+                        stationNamesStrings.add("");
+                    Position sPosition=new Position(s.getA_b_address(),s.getA_b_latitude(),s.getA_b_longitude());
+                    stationPositionList.add(sPosition);
+                    stationsAndInerStationsPositionList.add(sPosition);
+
+                    if(interStationList.size()>0){
+                        for(IntermediaryPoint point : PointInOrder(interStationList.get(0).getIntermediary_point()) ){
+                            Position InterS_Position;
+                            InterS_Position = new Position(point.getA_b_address(), point.getA_b_latitude(), point.getA_b_longitude());
+                            stationsAndInerStationsPositionList.add(InterS_Position);
+                        }
+
+//           Path point list
+                        JSONArray jsonArray;
+                        for (InterStation interStation:interStationList){
+                            try {
+                                jsonArray=new JSONArray( interStation.getA_b_path());
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    double[] LatLongs= new Gson().fromJson(jsonArray.get(i).toString(),double[].class) ;
+                                    Position position=new Position(null,LatLongs[0],LatLongs[1]);
+                                    pathPointList.add(position);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+
+                }
+
+            }
+        }
+    }
+
+
+
+    public void getStationsB(List<Station>stations) {
+        stationNamesStrings=new ArrayList<>();
+        stationTitle=new ArrayList<>();
+        stationsAndInerStationsPositionList=new ArrayList<>();
+        stationPositionList=new ArrayList<>();
+        pathPointList=new ArrayList<>();
+        Collections.reverse(stations);
+        for (Station s:stations){
+            if (s.getB_a_latitude()!=0.0){
+
+                List<InterStation>interStationList=new ArrayList<>();
+                    interStationList=s.getDestinterstation();
+    //            stations names
+
+                    stationNamesStrings.add((s.getName()));
+                stationTitle.add((s.getName()));
+                    if(!s.equals(stations.get(stations.size()-1))){
+                        stationNamesStrings.add("");
+                        stationNamesStrings.add("");
+                        stationNamesStrings.add("");
+                    }
+                    Position sPosition=new Position(s.getB_a_address(),s.getB_a_latitude(),s.getB_a_longitude());
+                    stationPositionList.add(sPosition);
+                    stationsAndInerStationsPositionList.add(sPosition);
+
+
+    //          stations positions
+
+
+                if(interStationList.size()>0){
+
+                   List<IntermediaryPoint>points = new ArrayList<>();
+                    points=PointInOrder(interStationList.get(0).getIntermediary_point());
+                    Collections.reverse(points);
+                    for(IntermediaryPoint point :points ){
+                        Position InterS_Position;
+                            InterS_Position=new Position(point.getA_b_address(),point.getB_a_latitude(),point.getB_a_longitude());
+                            stationsAndInerStationsPositionList.add(InterS_Position);
+                    }
+
+    //           Path point list
+                    JSONArray jsonArray;
+
+                        for (InterStation interStation:interStationList){
+                            try {
+
+                                    jsonArray = new JSONArray(interStation.getB_a_path());
+
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    double[] LatLongs = new Gson().fromJson(jsonArray.get(i).toString(), double[].class);
+                                        Position position = new Position(null, LatLongs[0], LatLongs[1]);
+                                        pathPointList.add(position);
+                                    }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                Log.i("home", "getStations: "+stationsAndInerStationsPositionList);
+            }
+        }
+    }
+
+
+    public  List<IntermediaryPoint> PointInOrder(List<IntermediaryPoint> points){
+//
+        Collections.sort(points, new Comparator<IntermediaryPoint>() {
+            @Override
+            public int compare(IntermediaryPoint o1, IntermediaryPoint o2) {
+                return o1.getOrder().compareTo(o2.getOrder());
+            }
+        });
+
+
+        return points;
+
+
+    }
 
 
 

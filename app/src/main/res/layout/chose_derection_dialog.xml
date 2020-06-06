@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="30dp"
+    android:layout_height="wrap_content">
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:text="chose your Direction : "
+        android:padding="20dp"
+        />
+
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="170dp"
+        android:layout_height="70dp"
+        android:layout_alignParentRight="true"
+        android:textSize="18dp"
+        android:padding="15dp"
+        android:background="@drawable/login_button"
+        android:textColor="@color/white"
+        android:drawableRight="@drawable/ic_check_white"
+        android:drawablePadding="20dp"
+        android:text="chose"
+        />
+</RelativeLayout>
+
+
+    <RadioGroup
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <me.omidh.liquidradiobutton.LiquidRadioButton
+            android:id="@+id/ab"
+            android:background="@drawable/bg_challenge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="40dp"
+            android:gravity="center_vertical"
+            app:lrb_strokeWidth="3dp"
+            app:lrb_explodeCount="2"
+            app:lrb_outterPadding="20dp"
+            app:lrb_innerCircleRadius="15dp"
+            app:lrb_strokeRadius="23dp"
+            app:lrb_inAnimDuration="500"
+            app:lrb_outAnimDuration="500"
+            android:checked="true"
+            app:lrb_checkedColor="@color/green_light"
+            app:lrb_unCheckedColor="@color/red"
+            android:text="Liquid Radio Button"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            />
+        <me.omidh.liquidradiobutton.LiquidRadioButton
+            android:id="@+id/ba"
+            android:background="@drawable/bg_challenge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="40dp"
+            android:gravity="center_vertical"
+            app:lrb_strokeWidth="3dp"
+            app:lrb_explodeCount="3"
+            app:lrb_outterPadding="20dp"
+            app:lrb_innerCircleRadius="15dp"
+            app:lrb_strokeRadius="23dp"
+            app:lrb_inAnimDuration="500"
+            app:lrb_outAnimDuration="500"
+            app:lrb_checkedColor="@color/green_light"
+            app:lrb_unCheckedColor="@color/red"
+            android:text="Liquid Radio Button"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            />
+
+    </RadioGroup>
+
+
+</LinearLayout>

@@ -1,8 +1,11 @@
 package com.example.driver.model;
 
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,7 +13,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class Line {
+public class Line implements Serializable {
 
     private int id;
     private int linetype_id;
@@ -137,72 +140,74 @@ public class Line {
         this.b_a_station = b_a_station;
     }
 
-
-
-    public List<String> getStationsNams() {
-        List<String>strings=new ArrayList<>();
-        for (Station s:station){
-            strings.add((s.getName()));
-            if(s.getId()<station.size()){
-                strings.add("");
-                strings.add("");
-                strings.add("");
-            }
-        }
-        return strings;
-    }
-
-
-
-
-    public List<Position> getStationsAndInerStationsPosition() {
-        List<Position>positions=new ArrayList<>();
-        for (Station s:station){
-           Position sPosition=new Position(s.getA_b_address(),s.getA_b_latitude(),s.getA_b_longitude());
-           positions.add(sPosition);
-          if(s.getSrcinterstation().size()>0){
-              for(IntermediaryPoint point : PointInOrder(s.getSrcinterstation().get(0).getIntermediary_point()) ){
-                  Position InterS_Position=new Position(point.getA_b_address(),point.getA_b_latitude(),point.getA_b_longitude());
-                  positions.add(InterS_Position);
-              }
-          }
-
-        }
-
-        return positions;
-    }
-    public List<Position> getStationsPosition() {
-        List<Position>positions=new ArrayList<>();
-        for (Station s:station){
-           Position sPosition=new Position(s.getA_b_address(),s.getA_b_latitude(),s.getA_b_longitude());
-           positions.add(sPosition);
-          }
-
-        return positions;
-    }
-    public List<Position> getPathPointList() {
-        List<Position>positions=new ArrayList<>();
-        for (Station s:station){
-            for (InterStation interStation:s.getSrcinterstation()){
-                try {
-                    JSONArray jsonArray=new JSONArray( interStation.getA_b_path());
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        double[] LatLongs= (double[])  jsonArray.get(i);
-                        for (int j = 0; j < LatLongs.length; j++) {
-                            Position sPosition=new Position(null,LatLongs[0],LatLongs[1]);
-                            positions.add(sPosition);
-                        }
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            ;
-          }
-
-        return positions;
-    }
+//
+//
+//    public List<String> getStationsNames(String direction) {
+//        List<String>strings=new ArrayList<>();
+//        for (Station s:station){
+//            strings.add((s.getName()));
+//            if(!s.equals(station.get(station.size()-1))){
+//                strings.add("");
+//                strings.add("");
+//                strings.add("");
+//            }
+//        }
+//        if (direction=="b_a"){
+//            Collections.reverse(strings);
+//        }
+//        return strings;
+//    }
+//
+//
+//
+//
+//    public List<Position> getStationsAndInerStationsPosition() {
+//        List<Position>positions=new ArrayList<>();
+//        for (Station s:station){
+//           Position sPosition=new Position(s.getA_b_address(),s.getA_b_latitude(),s.getA_b_longitude());
+//           positions.add(sPosition);
+//          if(s.getSrcinterstation().size()>0){
+//              for(IntermediaryPoint point : PointInOrder(s.getSrcinterstation().get(0).getIntermediary_point()) ){
+//                  Position InterS_Position=new Position(point.getA_b_address(),point.getA_b_latitude(),point.getA_b_longitude());
+//                  positions.add(InterS_Position);
+//              }
+//          }
+//
+//        }
+//
+//        return positions;
+//    }
+//    public List<Position> getStationsPosition() {
+//        List<Position>positions=new ArrayList<>();
+//        for (Station s:station){
+//           Position sPosition=new Position(s.getA_b_address(),s.getA_b_latitude(),s.getA_b_longitude());
+//           positions.add(sPosition);
+//          }
+//
+//        return positions;
+//    }
+//    public List<Position> getPathPointList() {
+//        List<Position>positions=new ArrayList<>();
+//        for (Station s:station){
+//            for (InterStation interStation:s.getSrcinterstation()){
+//                try {
+//                    JSONArray jsonArray=new JSONArray( interStation.getA_b_path());
+//                    for (int i = 0; i < jsonArray.length(); i++) {
+//                        double[] LatLongs= new Gson().fromJson(jsonArray.get(i).toString(),double[].class) ;
+//                        for (int j = 0; j < LatLongs.length; j++) {
+//                            Position sPosition=new Position(null,LatLongs[0],LatLongs[1]);
+//                            positions.add(sPosition);
+//                        }
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            ;
+//          }
+//
+//        return positions;
+//    }
 
     @Override
     public String toString() {
@@ -223,20 +228,20 @@ public class Line {
     }
 
 
-
-    public  List<IntermediaryPoint> PointInOrder(List<IntermediaryPoint> points){
 //
-        Collections.sort(points, new Comparator<IntermediaryPoint>() {
-            @Override
-            public int compare(IntermediaryPoint o1, IntermediaryPoint o2) {
-                return o1.getOrder().compareTo(o2.getOrder());
-            }
-        });
-
-
-        return points;
-
-
-    }
+//    public  List<IntermediaryPoint> PointInOrder(List<IntermediaryPoint> points){
+////
+//        Collections.sort(points, new Comparator<IntermediaryPoint>() {
+//            @Override
+//            public int compare(IntermediaryPoint o1, IntermediaryPoint o2) {
+//                return o1.getOrder().compareTo(o2.getOrder());
+//            }
+//        });
+//
+//
+//        return points;
+//
+//
+//    }
 }
 

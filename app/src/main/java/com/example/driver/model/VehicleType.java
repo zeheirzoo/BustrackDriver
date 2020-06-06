@@ -1,8 +1,9 @@
 package com.example.driver.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class VehicleType {
+public class VehicleType implements Serializable {
 
 
     private int id;

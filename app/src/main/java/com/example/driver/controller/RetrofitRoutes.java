@@ -20,7 +20,7 @@ public interface RetrofitRoutes {
     Call<Driver>Login(@Body User user);
 //consum/3/3/30/10:10
     @GET("consum/{id}/{ride}/{price}/{time}")
-    Call<String>consumTiket(@Path("id") int id, @Path("ride") int raid, @Path("price") int price, @Path("time")String time);//consum/3/3/30/10:10
+    Call<String>consumTicket(@Path("id") int id, @Path("ride") int raid, @Path("price") int price, @Path("time")String time);//consum/3/3/30/10:10
 
 
 //   ride

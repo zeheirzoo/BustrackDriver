@@ -1,8 +1,9 @@
 package com.example.driver.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class IntermediaryPoint {
+public class IntermediaryPoint implements Serializable {
 
     private int id;
     private int interstation_id;

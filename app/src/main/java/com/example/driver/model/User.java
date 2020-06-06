@@ -1,31 +1,17 @@
 package com.example.driver.model;
 
-import java.util.Date;
+//import java.util.String;
 
-public class User {
-//
-//     {
-//        "id": 2,
-//        "sold": 100,
-//        "user": {
-//            "id": 3,
-//            "username": "zaki_dahaba",
-//            "firstname": "Zaki",
-//            "lastname": "Dahaba",
-//            "email": "zaki-dehaba@gmail.com",
-//            "role": "costumer",
-//            "created_at": "2020-05-07T22:17:07.000000Z",
-//            "updated_at": "2020-05-07T22:17:07.000000Z"
-//        },
-//        "preference": [],
-//        "favorites": [],
-//        "ride": []
+import java.io.Serializable;
+
+public class User implements Serializable {
+
 
     int id;
     String username,firstname,lastname,email,password,role,userable_type;
-    Date created_at,updated_at;
+    String created_at,updated_at;
 
-    public User(int id, String username, String firstname, String lastname, String email, String password, String role, Date created_at, Date updated_at) {
+    public User(int id, String username, String firstname, String lastname, String email, String password, String role, String created_at, String updated_at) {
         this.id = id;
         this.username = username;
         this.firstname = firstname;
@@ -37,7 +23,7 @@ public class User {
         this.updated_at = updated_at;
     }
 
-    public User(int id, String username, String firstname, String lastname, String email, String password, String role, String userable_type, Date created_at, Date updated_at) {
+    public User(int id, String username, String firstname, String lastname, String email, String password, String role, String userable_type, String created_at, String updated_at) {
         this.id = id;
         this.username = username;
         this.firstname = firstname;
@@ -121,19 +107,19 @@ public class User {
         this.role = role;
     }
 
-    public Date getCreated_at() {
+    public String getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(Date created_at) {
+    public void setCreated_at(String created_at) {
         this.created_at = created_at;
     }
 
-    public Date getUpdated_at() {
+    public String getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(Date updated_at) {
+    public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
     }
 

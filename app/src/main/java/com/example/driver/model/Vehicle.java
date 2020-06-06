@@ -1,8 +1,10 @@
 package com.example.driver.model;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
-public class Vehicle {
+public class Vehicle implements Serializable {
 
 
     /**?
@@ -36,13 +38,13 @@ public class Vehicle {
     private String matricule;
     private String branch;
     private String registernumbre;
-    private Position vehicle_position;
+    private List<Position> vehicle_position;
     private VehicleType vehicle_type;
 
 
     public Vehicle(int id, int vehicle_owner_id, int vehicle_type_id,
                    int seatmaxcount, String matricule, String branch,
-                   String registernumbre, Position vehicle_position,
+                   String registernumbre, List<Position> vehicle_position,
                    VehicleType vehicle_type) {
         this.id = id;
         this.vehicle_owner_id = vehicle_owner_id;
@@ -111,11 +113,11 @@ public class Vehicle {
         this.registernumbre = registernumbre;
     }
 
-    public Position getVehicle_position() {
+    public List<Position> getVehicle_position() {
         return vehicle_position;
     }
 
-    public void setVehicle_position(Position vehicle_position) {
+    public void setVehicle_position(List<Position> vehicle_position) {
         this.vehicle_position = vehicle_position;
     }
 

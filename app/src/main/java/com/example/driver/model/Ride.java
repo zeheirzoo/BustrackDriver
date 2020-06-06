@@ -1,15 +1,16 @@
 package com.example.driver.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Ride {
+public class Ride implements Serializable {
 //
     private int id;
     private int driver_id;
     private int vehicle_id;
     private int line_id;
     private int current_station_id;
-    private int current_intermediary_point_id;
+    private Integer current_intermediary_point_id;
     private String direction;
     private Date departure_date;
     private Date finish_date;
@@ -19,7 +20,23 @@ public class Ride {
     private Station station;
     private IntermediaryPoint intermediary_point;
 
-    public Ride(int id, int driver_id, int vehicle_id, int line_id, int current_station_id, int current_intermediary_point_id, String direction, Date departure_date, Date finish_date, Date create_at, Line line, Vehicle vehicle, Station station, IntermediaryPoint intermediary_point) {
+    public Ride( int driver_id,
+                int vehicle_id, int line_id,
+                int current_station_id,
+                String direction, Date departure_date,
+                Date finish_date, Date create_at) {
+
+        this.driver_id = driver_id;
+        this.vehicle_id = vehicle_id;
+        this.line_id = line_id;
+        this.current_station_id = current_station_id;
+        this.direction = direction;
+        this.departure_date = departure_date;
+        this.finish_date = finish_date;
+        this.create_at = create_at;
+    }
+
+    public Ride(int id, int driver_id, int vehicle_id, int line_id, int current_station_id, Integer current_intermediary_point_id, String direction, Date departure_date, Date finish_date, Date create_at, Line line, Vehicle vehicle, Station station, IntermediaryPoint intermediary_point) {
         this.id = id;
         this.driver_id = driver_id;
         this.vehicle_id = vehicle_id;
@@ -76,11 +93,11 @@ public class Ride {
         this.current_station_id = current_station_id;
     }
 
-    public int getCurrent_intermediary_point_id() {
+    public Integer getCurrent_intermediary_point_id() {
         return current_intermediary_point_id;
     }
 
-    public void setCurrent_intermediary_point_id(int current_intermediary_point_id) {
+    public void setCurrent_intermediary_point_id(Integer current_intermediary_point_id) {
         this.current_intermediary_point_id = current_intermediary_point_id;
     }
 

@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         retrofitRoutes=retrofit.create(RetrofitRoutes.class);
 
 
-        Call<String> call=retrofitRoutes.consumTiket(id,ride,price,time);
+        Call<String> call=retrofitRoutes.consumTicket(id,ride,price,time);
 
         call.enqueue(new Callback<String>() {
 

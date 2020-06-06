@@ -1,9 +1,10 @@
 package com.example.driver.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class Station {
+public class Station implements Serializable {
 /*
 *  "id": 1,
     "name": "Ziayadia",

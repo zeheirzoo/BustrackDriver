@@ -1,8 +1,9 @@
 package com.example.driver.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class LineType {
+public class LineType implements Serializable {
 
 
     private int id;

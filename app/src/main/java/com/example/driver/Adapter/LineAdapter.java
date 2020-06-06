@@ -36,7 +36,7 @@ public class LineAdapter extends ArrayAdapter<Line> {
 
         Line line=lines.get(position);
         if ( line.getStation().size()>0)
-            line_title.setText(line.getStation().get(0).getName()+"  -->  "+line.getStation().get(line.getStation().size()-1).getName());
+            line_title.setText(line.getA_b_station().getName()+"  -->  "+line.getB_a_station().getName());
 
         else
             line_title.setText(line.getStation().size()+"--");
