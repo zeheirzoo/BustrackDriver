@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -104,8 +105,7 @@ getSupportActionBar().hide();
 
             @Override
             public void onFailure(Call<List<Line>> call, Throwable t) {
-                sweetAlertDialog.dismiss();
-                new SweetAlertDialog(getApplicationContext(), SweetAlertDialog.ERROR_TYPE).setTitleText("Error"+t.getCause()) .show();
+                Toasty.error(getApplicationContext(),"check you network");
                 Log.i("getLine", "onFailure: "+t.getCause());
             }
         });

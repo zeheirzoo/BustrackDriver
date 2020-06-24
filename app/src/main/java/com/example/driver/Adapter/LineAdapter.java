@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import com.example.driver.R;
 import com.example.driver.model.Line;
 import com.example.driver.model.Station;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,16 +34,19 @@ public class LineAdapter extends ArrayAdapter<Line> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.line_item, parent, false);
         }
         TextView line_title=convertView.findViewById(R.id.line_title);
+        TextView line_number =convertView.findViewById(R.id.line_number);
+        MaterialCardView line_circle =convertView.findViewById(R.id.line_circle);
 
         Line line=lines.get(position);
         if ( line.getStation().size()>0)
             line_title.setText(line.getA_b_station().getName()+"  -->  "+line.getB_a_station().getName());
-
         else
             line_title.setText(line.getStation().size()+"--");
 
+        line_number.setText(line.getIdentifier()+"");
+        line_circle.setBackgroundColor(Color.parseColor(line.getColortype()));
+        line_circle.setRadius(200);
 
-        line_title.getRootView().setBackgroundColor(Color.parseColor(line.getColortype()));
 
 
         return convertView;

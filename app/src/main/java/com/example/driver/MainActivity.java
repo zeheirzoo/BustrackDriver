@@ -3,6 +3,8 @@ package com.example.driver;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -14,10 +16,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +35,10 @@ import androidx.fragment.app.FragmentTransaction;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.example.driver.Adapter.ChoseDerectionAdapter;
 import com.example.driver.controller.RetrofitRoutes;
+import com.example.driver.model.Line;
+import com.example.driver.model.Station;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -40,9 +47,12 @@ import com.google.zxing.Result;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,6 +67,10 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
 
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
+    SharedPreferences linePref;
+    SharedPreferences.Editor lineEditor;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     HorizontalScrollView scrollmenu;
@@ -72,6 +86,14 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout scanner_Layout;
     MyTextToSpeak myTextToSpeak;
     MediaPlayer bipSmok ;
+    Line myLine;
+    String[] prices;
+    List<Station> terminusStationList;
+
+    ListView lv_prices;
+    ChoseDerectionAdapter choseDerectionAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,15 +101,23 @@ public class MainActivity extends AppCompatActivity {
         activity=this;
         getSupportActionBar().hide();
         if (!CheckPermissions())RequestPermissions();
+        pref =getSharedPreferences("DriverPref", Context.MODE_PRIVATE);
+        editor=pref.edit();
+        linePref =getSharedPreferences("linePref", Context.MODE_PRIVATE);
+        lineEditor=linePref.edit();
+        Log.i("driverPref", "pref :  "+pref.getAll());
+        Log.i("driverPref2", "line pref :  "+linePref.getAll());
+
+
 
         myTextToSpeak=new MyTextToSpeak(this);
         bipSmok = MediaPlayer.create(this, R.raw.zxing_beep);
-
 
         fragmentManager=getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame_content,new HomeFragment()).commit();
 
         price_layout =findViewById(R.id.price_layout);
+        lv_prices =findViewById(R.id.lv_price);
         error_layout =findViewById(R.id.error_layout);
         success_layout =findViewById(R.id.success_layout);
         scanne_ticket_text =findViewById(R.id.scanne_ticket_text);
@@ -102,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 scrollmenu.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
                 v.setBackgroundColor(Color.GRAY);
-                prev.setBackgroundResource(R.color.colorPrimaryDark);
+                prev.setBackgroundResource(R.color.colorPrimaryDark3);
 
             }
         });
@@ -111,9 +141,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 scrollmenu.fullScroll(HorizontalScrollView.FOCUS_LEFT);
                 v.setBackgroundColor(Color.GRAY);
-                next.setBackgroundResource(R.color.colorPrimaryDark);
+                next.setBackgroundResource(R.color.colorPrimaryDark3);
             }
         });
+
+
+
+        getLineResult();
+
+
 
         successSound= MediaPlayer.create(this, R.raw.zxing_beep);
         scannerSound= MediaPlayer.create(this, R.raw.scanner_sound);
@@ -159,13 +195,22 @@ public class MainActivity extends AppCompatActivity {
                 scanne_ticket_text.setVisibility(View.VISIBLE);
             }
         });
-        openScanner(isOpen);
         open_scanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openScanner(isOpen);
+                if (linePref.getBoolean("online",false)==true){
+                    openScanner(isOpen);
+
+                }else {
+                    Toasty.warning(getApplicationContext(),"you should start the ride first ").show();
+                }
             }
         });
+
+
+
+
+
 
 
     }
@@ -181,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         }else{
-            ConsumTicket(resultObject.get("id").getAsInt(),3,resultObject.get("price").getAsInt(),time);
+            ConsumTicket(resultObject.get("id").getAsInt(),linePref.getInt("rideID",-1),resultObject.get("price").getAsInt(),time);
         }
 
 
@@ -234,8 +279,30 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Veuillez SVP respecter le silence", Toast.LENGTH_SHORT).show();
         }
 
-        if (itemIndex==R.id.nav_logout)fragmentTransaction.replace(R.id.frame_content,new SettingsFragment()).addToBackStack( "pager" );
+        if (itemIndex==R.id.nav_logout){
+            new SweetAlertDialog(MainActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Are you sure?")
+                    .setContentText("you want to disconnect !! ")
+                    .setConfirmText("Yes,logout!")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
 
+                            lineEditor.clear();
+                            lineEditor.commit();
+                            editor.clear();
+                            editor.commit();
+                            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                            finish();
+                        }
+                    })
+                    .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) { sDialog.dismissWithAnimation();}
+                    }) .show();
+
+        }
     }
 
     public boolean CheckPermissions() {
@@ -332,9 +399,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void choseStation(View view) {
-        TextView price =(TextView) ((LinearLayout)view).getChildAt(1);
-        ConsumTicket(resultObject.get("id").getAsInt(),3,(int)Integer.valueOf(price.getText().toString()),time);
+
+
+    public void getLineResult(){
+        myLine=(Line) getIntent().getSerializableExtra("Line");
+        prices=myLine.getPrices();
+        terminusStationList=new ArrayList<>();
+        terminusStationList=myLine.getTerminusStation();
+
+        choseDerectionAdapter=new ChoseDerectionAdapter(getApplicationContext(),terminusStationList,prices);
+        lv_prices.setAdapter(choseDerectionAdapter);
+
+        lv_prices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                ConsumTicket(resultObject.get("id").getAsInt(),linePref.getInt("rideID",-1),(int)Integer.valueOf(prices[position]),time);
+
+            }
+        });
 
     }
+
+
 }

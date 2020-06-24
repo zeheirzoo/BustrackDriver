@@ -44,7 +44,6 @@ import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -59,6 +58,7 @@ import com.example.driver.model.Line;
 import com.example.driver.model.Position;
 import com.example.driver.model.Ride;
 import com.example.driver.model.Station;
+import com.example.driver.model.Vehicle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.shuhart.stepview.StepView;
@@ -89,6 +89,7 @@ import params.com.stepview.StatusView;
 import params.com.stepview.StatusViewScroller;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -349,8 +350,15 @@ boolean online =false ;
 
             GetRoute(pathPointList);
             drawStationMarker(stationPositionList);
-
-
+// stationNamesStrings=new ArrayList<>();
+//    stationTitle=new ArrayList<>();
+//    stationsAndInerStationsPositionList=new ArrayList<>();
+//    stationPositionList=new ArrayList<>();
+//    pathPointList=new ArrayList<>();
+            Log.i("test", "stationNamesStrings : "+stationNamesStrings.size());
+            Log.i("test", "stationsAndInerStationsPositionList: "+stationsAndInerStationsPositionList.size());
+            Log.i("test", "stationTitle : "+stationTitle.size());
+            Log.i("test", "stationPositionList: "+stationPositionList.size());
 
         }else {
             new SweetAlertDialog(getContext(),SweetAlertDialog.ERROR_TYPE).setTitleText("my line  "+myLine).show();
@@ -511,6 +519,9 @@ boolean online =false ;
         statusViewScroller.getStatusView().setCurrentCount( CurrentStation+1);
         map.invalidate();
         stationDetector();
+
+        updatePosition(1,p);
+
     }
 
     public void goToPreviousStation(){
@@ -529,6 +540,8 @@ boolean online =false ;
         map.invalidate();
 
         stationDetector();
+
+        updatePosition(1,p);
     }
 
     public void stationDetector() {
@@ -547,7 +560,7 @@ boolean online =false ;
                     .setConfirmButton("getnew ride ", new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
-sweetAlertDialog.dismiss();
+            sweetAlertDialog.dismiss();
 //                            Collections.reverse((List) stationNamesStrings);
 //                            Collections.reverse((List) stationsAndInerStationsPositionList);
 //                            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
@@ -574,7 +587,7 @@ sweetAlertDialog.dismiss();
             if (!stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1).isEmpty()) {
                 myTextToSpeak.speakOut("Station " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1), bip);
                 Toasty.success(getContext(), "محطة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)).show();
-//                sweetAlertDialog. setTitleText( "Station "   + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)) .show();
+                sweetAlertDialog. setTitleText( "Station "   + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)) .show();
                 timer();
                 ((MainActivity) getActivity()).openScanner(true);
             }
@@ -615,13 +628,16 @@ sweetAlertDialog.dismiss();
             public void onResponse(Call<Ride> call, retrofit2.Response<Ride> response) {
              if(response.isSuccessful()){
                   sweetAlertDialog.dismiss();
-                  new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE).setTitleText("StART Ride SUCCESSFUL") .show();
+                  new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE).setTitleText("StART Ride SUCCESSFUL"+response.body().getId()) .show();
 
                   start_ride.setVisibility(View.GONE);
                   correct_position.setVisibility(View.VISIBLE);
                   lineEditor.putBoolean("online",true);
+                  lineEditor.putInt("rideID",response.body().getId());
                   lineEditor.commit();
-              }
+
+                 ((MainActivity) getActivity()).openScanner(true);
+             }
               else {
 
                     new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE).setTitleText("StART Ride failed") .show();
@@ -640,6 +656,175 @@ sweetAlertDialog.dismiss();
             }
         });
     }
+
+    private void updatePosition(int id,Position position) {
+        Gson gson=new GsonBuilder().serializeNulls().create();
+
+
+        String url ="http://transport.misc-lab.org/api/";
+        Retrofit retrofit=new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        RetrofitRoutes retrofitRoutes=retrofit.create(RetrofitRoutes.class);
+
+
+
+        Call<Vehicle> call=retrofitRoutes.UpdatePosition(id,position);
+
+        call.enqueue(new Callback<Vehicle>() {
+            @Override
+            public void onResponse(Call<Vehicle> call, Response<Vehicle> response) {
+
+                if (response.isSuccessful()&&response.code()==200){
+                    Log.i("successful", "onResponse: "+response.body());
+                }else{
+                    Toasty.warning(getContext(),response+"").show();
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Vehicle> call, Throwable t) {
+Toasty.error(getContext(),t.getCause()+"").show();
+            }
+        });
+    }
+
+    public void getStations(List<Station>stations) {
+    stationNamesStrings=new ArrayList<>();
+    stationTitle=new ArrayList<>();
+    stationsAndInerStationsPositionList=new ArrayList<>();
+    stationPositionList=new ArrayList<>();
+    pathPointList=new ArrayList<>();
+    for (Station s:stations){
+        if (s.getA_b_latitude()!=0.0){
+            List<InterStation>interStationList=new ArrayList<>();
+            interStationList=s.getSrcinterstation();
+
+                stationNamesStrings.add((s.getName()));
+                stationTitle.add((s.getName()));
+                if(!s.equals(stations.get(stations.size()-1))){
+                    stationNamesStrings.add("");
+                    stationNamesStrings.add("");
+                    stationNamesStrings.add("");
+                }
+
+            Position sPosition=new Position(s.getA_b_address(),s.getA_b_latitude(),s.getA_b_longitude());
+                stationPositionList.add(sPosition);
+                stationsAndInerStationsPositionList.add(sPosition);
+
+                if(interStationList.size()>0){
+                    for(IntermediaryPoint point : PointInOrder(interStationList.get(0).getIntermediary_point()) ){
+                        Position InterS_Position;
+                        InterS_Position = new Position(point.getA_b_address(), point.getA_b_latitude(), point.getA_b_longitude());
+                        stationsAndInerStationsPositionList.add(InterS_Position);
+                    }
+
+    //           Path point list
+                    JSONArray jsonArray;
+                    for (InterStation interStation:interStationList){
+                        try {
+                            jsonArray=new JSONArray( interStation.getA_b_path());
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                double[] LatLongs= new Gson().fromJson(jsonArray.get(i).toString(),double[].class) ;
+                                Position position=new Position(null,LatLongs[0],LatLongs[1]);
+                                pathPointList.add(position);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+
+        }
+    }
+    }
+
+    public void getStationsB(List<Station>stations) {
+    stationNamesStrings=new ArrayList<>();
+    stationTitle=new ArrayList<>();
+    stationsAndInerStationsPositionList=new ArrayList<>();
+    stationPositionList=new ArrayList<>();
+    pathPointList=new ArrayList<>();
+    Collections.reverse(stations);
+    for (Station s:stations){
+        if (s.getB_a_latitude()!=0.0){
+
+            List<InterStation>interStationList=new ArrayList<>();
+                interStationList=s.getDestinterstation();
+    //            stations names
+
+                stationNamesStrings.add((s.getName()));
+            stationTitle.add((s.getName()));
+                if(!s.equals(stations.get(stations.size()-1))){
+                    stationNamesStrings.add("");
+                    stationNamesStrings.add("");
+                    stationNamesStrings.add("");
+                }
+                Position sPosition=new Position(s.getB_a_address(),s.getB_a_latitude(),s.getB_a_longitude());
+                stationPositionList.add(sPosition);
+                stationsAndInerStationsPositionList.add(sPosition);
+
+
+    //          stations positions
+
+
+            if(interStationList.size()>0){
+
+               List<IntermediaryPoint>points = new ArrayList<>();
+                points=PointInOrder(interStationList.get(0).getIntermediary_point());
+                Collections.reverse(points);
+                for(IntermediaryPoint point :points ){
+                    Position InterS_Position;
+                        InterS_Position=new Position(point.getA_b_address(),point.getB_a_latitude(),point.getB_a_longitude());
+                        stationsAndInerStationsPositionList.add(InterS_Position);
+                }
+
+    //           Path point list
+                JSONArray jsonArray;
+
+                    for (InterStation interStation:interStationList){
+                        try {
+
+                                jsonArray = new JSONArray(interStation.getB_a_path());
+
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                double[] LatLongs = new Gson().fromJson(jsonArray.get(i).toString(), double[].class);
+                                    Position position = new Position(null, LatLongs[0], LatLongs[1]);
+                                    pathPointList.add(position);
+                                }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            Log.i("home", "getStations: "+stationsAndInerStationsPositionList);
+        }
+    }
+    }
+
+    public  List<IntermediaryPoint> PointInOrder(List<IntermediaryPoint> points){
+    //
+    Collections.sort(points, new Comparator<IntermediaryPoint>() {
+        @Override
+        public int compare(IntermediaryPoint o1, IntermediaryPoint o2) {
+            return o1.getOrder().compareTo(o2.getOrder());
+        }
+    });
+
+
+    return points;
+
+
+    }
+
+
     @Override
     public void onDestroyView() {
         if(myTextToSpeak != null) {
@@ -648,145 +833,6 @@ sweetAlertDialog.dismiss();
         }
         super.onDestroyView();
     }
-
-
-
-
-
-    public void getStations(List<Station>stations) {
-        stationNamesStrings=new ArrayList<>();
-        stationTitle=new ArrayList<>();
-        stationsAndInerStationsPositionList=new ArrayList<>();
-        stationPositionList=new ArrayList<>();
-        pathPointList=new ArrayList<>();
-        for (Station s:stations){
-            if (s.getA_b_latitude()!=0.0){
-                List<InterStation>interStationList=new ArrayList<>();
-                interStationList=s.getSrcinterstation();
-
-                    stationNamesStrings.add((s.getName()));
-                    stationTitle.add((s.getName()));
-                    if(!s.equals(stations.get(stations.size()-1))){
-                        stationNamesStrings.add("");
-                        stationNamesStrings.add("");
-                        stationNamesStrings.add("");
-                    Position sPosition=new Position(s.getA_b_address(),s.getA_b_latitude(),s.getA_b_longitude());
-                    stationPositionList.add(sPosition);
-                    stationsAndInerStationsPositionList.add(sPosition);
-
-                    if(interStationList.size()>0){
-                        for(IntermediaryPoint point : PointInOrder(interStationList.get(0).getIntermediary_point()) ){
-                            Position InterS_Position;
-                            InterS_Position = new Position(point.getA_b_address(), point.getA_b_latitude(), point.getA_b_longitude());
-                            stationsAndInerStationsPositionList.add(InterS_Position);
-                        }
-
-//           Path point list
-                        JSONArray jsonArray;
-                        for (InterStation interStation:interStationList){
-                            try {
-                                jsonArray=new JSONArray( interStation.getA_b_path());
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    double[] LatLongs= new Gson().fromJson(jsonArray.get(i).toString(),double[].class) ;
-                                    Position position=new Position(null,LatLongs[0],LatLongs[1]);
-                                    pathPointList.add(position);
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-
-                }
-
-            }
-        }
-    }
-
-
-
-    public void getStationsB(List<Station>stations) {
-        stationNamesStrings=new ArrayList<>();
-        stationTitle=new ArrayList<>();
-        stationsAndInerStationsPositionList=new ArrayList<>();
-        stationPositionList=new ArrayList<>();
-        pathPointList=new ArrayList<>();
-        Collections.reverse(stations);
-        for (Station s:stations){
-            if (s.getB_a_latitude()!=0.0){
-
-                List<InterStation>interStationList=new ArrayList<>();
-                    interStationList=s.getDestinterstation();
-    //            stations names
-
-                    stationNamesStrings.add((s.getName()));
-                stationTitle.add((s.getName()));
-                    if(!s.equals(stations.get(stations.size()-1))){
-                        stationNamesStrings.add("");
-                        stationNamesStrings.add("");
-                        stationNamesStrings.add("");
-                    }
-                    Position sPosition=new Position(s.getB_a_address(),s.getB_a_latitude(),s.getB_a_longitude());
-                    stationPositionList.add(sPosition);
-                    stationsAndInerStationsPositionList.add(sPosition);
-
-
-    //          stations positions
-
-
-                if(interStationList.size()>0){
-
-                   List<IntermediaryPoint>points = new ArrayList<>();
-                    points=PointInOrder(interStationList.get(0).getIntermediary_point());
-                    Collections.reverse(points);
-                    for(IntermediaryPoint point :points ){
-                        Position InterS_Position;
-                            InterS_Position=new Position(point.getA_b_address(),point.getB_a_latitude(),point.getB_a_longitude());
-                            stationsAndInerStationsPositionList.add(InterS_Position);
-                    }
-
-    //           Path point list
-                    JSONArray jsonArray;
-
-                        for (InterStation interStation:interStationList){
-                            try {
-
-                                    jsonArray = new JSONArray(interStation.getB_a_path());
-
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    double[] LatLongs = new Gson().fromJson(jsonArray.get(i).toString(), double[].class);
-                                        Position position = new Position(null, LatLongs[0], LatLongs[1]);
-                                        pathPointList.add(position);
-                                    }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                Log.i("home", "getStations: "+stationsAndInerStationsPositionList);
-            }
-        }
-    }
-
-
-    public  List<IntermediaryPoint> PointInOrder(List<IntermediaryPoint> points){
-//
-        Collections.sort(points, new Comparator<IntermediaryPoint>() {
-            @Override
-            public int compare(IntermediaryPoint o1, IntermediaryPoint o2) {
-                return o1.getOrder().compareTo(o2.getOrder());
-            }
-        });
-
-
-        return points;
-
-
-    }
-
 
 
 

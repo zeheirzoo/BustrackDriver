@@ -38,6 +38,7 @@ public class Station implements Serializable {
     private List<InterStation> srcinterstation;
     private  List<InterStation>destinterstation;
 
+    private LineStation line_station;
 
     public Station(int id, String name, double a_b_latitude,
                    double a_b_longitude, String a_b_address,
@@ -55,6 +56,21 @@ public class Station implements Serializable {
         this.create_at = create_at;
         this.srcinterstation = srcinterstation;
         this.destinterstation = destinterstation;
+    }
+
+    public Station(int id, String name, double a_b_latitude, double a_b_longitude, String a_b_address, double b_a_latitude, double b_a_longitude, String b_a_address, Date create_at, List<InterStation> srcinterstation, List<InterStation> destinterstation, LineStation line_station) {
+        this.id = id;
+        this.name = name;
+        this.a_b_latitude = a_b_latitude;
+        this.a_b_longitude = a_b_longitude;
+        this.a_b_address = a_b_address;
+        this.b_a_latitude = b_a_latitude;
+        this.b_a_longitude = b_a_longitude;
+        this.b_a_address = b_a_address;
+        this.create_at = create_at;
+        this.srcinterstation = srcinterstation;
+        this.destinterstation = destinterstation;
+        this.line_station = line_station;
     }
 
     public int getId() {
@@ -146,7 +162,22 @@ public class Station implements Serializable {
     }
 
 
+    public LineStation getLine_station() {
+        return line_station;
+    }
 
+    public void setLine_station(LineStation line_station) {
+        this.line_station = line_station;
+    }
+
+
+public  boolean isTerminus(){
+        if (this.getLine_station().getIs_terminus()==1){
+            return true;
+        }else {
+            return false;
+        }
+}
 
 
 

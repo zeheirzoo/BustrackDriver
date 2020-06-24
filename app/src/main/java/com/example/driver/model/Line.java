@@ -140,6 +140,17 @@ public class Line implements Serializable {
         this.b_a_station = b_a_station;
     }
 
+
+    public List<Station> getTerminusStation() {
+        List<Station>st=new ArrayList<>();
+
+        for (Station s:station){
+            if (s.isTerminus()){
+                st.add(s);
+            }
+        }
+        return st;
+    }
 //
 //
 //    public List<String> getStationsNames(String direction) {

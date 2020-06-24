@@ -24,7 +24,7 @@
             <Button
                 android:id="@+id/nav_line"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
                 android:layout_margin="5dp"
                 android:padding="20dp"
                 android:background="@color/colorPrimary"
@@ -37,7 +37,7 @@
             <Button
                 android:id="@+id/nav_map"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
                 android:layout_margin="5dp"
                 android:padding="20dp"
                 android:text=""
@@ -53,8 +53,8 @@
         <LinearLayout
             android:elevation="10dp"
             android:id="@+id/correct_position"
-            android:orientation="vertical"
-            android:visibility="gone"
+            android:orientation="horizontal"
+             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -88,9 +88,9 @@
             <Button
                 android:drawableTop="@drawable/ic_directions_black_24dp"
                 android:id="@+id/start_ride"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_margin="5dp"
+                android:layout_width="140dp"
+                android:layout_height="100dp"
+                android:layout_margin="10dp"
                 android:background="@color/green_light"
                 android:text="Start ride"
                 android:textColor="@color/white"

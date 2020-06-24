@@ -60,7 +60,7 @@ public class ChoseDerectionDialog extends Dialog {
         ab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ab.setBackgroundColor(Color.rgb(230,20,200));
+                ab.setBackgroundColor(Color.rgb(230,230,230));
                 ba.setBackgroundColor(Color.WHITE);
 
 
