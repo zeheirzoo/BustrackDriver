@@ -23,12 +23,12 @@ public class Line implements Serializable {
     private String colortype;
     private String city;
     private LineType linetype;
-    private String[] prices;
+    private List<String> prices;
     private List<Station>  station;
     private Station a_b_station;
     private Station b_a_station;
 
-    public Line(int id, int linetype_id, int a_b_id, int b_a_id, int identifier, String colortype, String city, LineType linetype, String[] prices,
+    public Line(int id, int linetype_id, int a_b_id, int b_a_id, int identifier, String colortype, String city, LineType linetype, List<String> prices,
                 List<Station> station, Station a_b_station, Station b_a_station) {
         this.id = id;
         this.linetype_id = linetype_id;
@@ -52,11 +52,11 @@ public class Line implements Serializable {
         this.linetype = linetype;
     }
 
-    public String[] getPrices() {
+    public List<String> getPrices() {
         return prices;
     }
 
-    public void setPrices(String[] prices) {
+    public void setPrices(List<String> prices) {
         this.prices = prices;
     }
 
@@ -231,7 +231,7 @@ public class Line implements Serializable {
                 ", colortype='" + colortype + '\'' +
                 ", city='" + city + '\'' +
                 ", linetype=" + linetype +
-                ", prices=" + Arrays.toString(prices) +
+                ", prices=" + prices.toString() +
                 ", station=" + station +
                 ", a_b_station=" + a_b_station +
                 ", b_a_station=" + b_a_station +

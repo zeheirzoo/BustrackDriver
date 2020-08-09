@@ -100,8 +100,18 @@ android:textSize="20dp"
 
        <ListView
            android:id="@+id/lv_price"
-           android:layout_width="wrap_content"
+           android:layout_width="match_parent"
            android:layout_height="wrap_content"/>
+        <ProgressBar
+            android:id="@+id/loader"
+            android:visibility="gone"
+            android:layout_centerVertical="true"
+            style="?android:attr/progressBarStyleLarge"
+            android:indeterminateTint="@color/white"
+            android:elevation="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ProgressBar>
 
  </LinearLayout>
 
@@ -116,11 +126,11 @@ android:textSize="20dp"
         android:background="@drawable/bg_success"
         android:layout_height="match_parent">
             <TextView
+                android:id="@+id/target_tv"
                 android:padding="10dp"
                 android:layout_width="match_parent"
                 android:gravity="center_horizontal"
                 android:layout_height="wrap_content"
-                android:text="-----"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textSize="20dp"/>
@@ -129,7 +139,6 @@ android:textSize="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="------"
                 android:padding="10dp"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/white"
@@ -153,7 +162,6 @@ android:textSize="20dp"
         android:visibility="gone"
         android:background="@drawable/bg_danger"
         android:layout_height="match_parent">
-
 
         <TextView
             android:padding="10dp"
@@ -202,8 +210,6 @@ android:layout_margin="2dp"
         android:layout_alignParentBottom="true"
 
         />
-
-
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="120dp"

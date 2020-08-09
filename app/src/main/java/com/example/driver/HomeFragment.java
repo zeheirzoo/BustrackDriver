@@ -677,7 +677,7 @@ boolean online =false ;
             public void onResponse(Call<Vehicle> call, Response<Vehicle> response) {
 
                 if (response.isSuccessful()&&response.code()==200){
-                    Log.i("successful", "onResponse: "+response.body());
+                    Log.i("successful", "onResponse: UpdatePosition  "+response.body());
                 }else{
                     Toasty.warning(getContext(),response+"").show();
 
@@ -794,8 +794,12 @@ Toasty.error(getContext(),t.getCause()+"").show();
 
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 double[] LatLongs = new Gson().fromJson(jsonArray.get(i).toString(), double[].class);
-                                    Position position = new Position(null, LatLongs[0], LatLongs[1]);
-                                    pathPointList.add(position);
+                                Position position = new Position(null, LatLongs[0], LatLongs[1]);
+                                pathPointList.add(position);
+//                                JSONObject LatLongs = new Gson().fromJson(jsonArray.get(i).toString(), JSONObject.class);
+//                                Position position = new Position(null, LatLongs.getDouble("lat"), LatLongs.getDouble("lng"));
+//                                pathPointList.add(position);
+
                                 }
 
                         } catch (JSONException e) {

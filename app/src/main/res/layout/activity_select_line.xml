@@ -28,6 +28,15 @@
             android:layout_margin="10dp"
             android:horizontalSpacing="10dp"
             android:id="@+id/line_lv"/>
+        <ImageButton
+            android:id="@+id/refreche"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:textSize="25dp"
+            android:textColor="@color/white"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_refresh_black_24dp"
+            android:background="@drawable/bg_circle_primary"/>
     </RelativeLayout>
 
 

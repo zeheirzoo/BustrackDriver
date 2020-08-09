@@ -22,6 +22,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +49,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -87,13 +89,13 @@ public class MainActivity extends AppCompatActivity {
     MyTextToSpeak myTextToSpeak;
     MediaPlayer bipSmok ;
     Line myLine;
-    String[] prices;
+  List<String> prices;
     List<Station> terminusStationList;
 
     ListView lv_prices;
     ChoseDerectionAdapter choseDerectionAdapter;
 
-
+    ProgressBar loader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
         scanne_ticket_text =findViewById(R.id.scanne_ticket_text);
         open_scanner =findViewById(R.id.open_scanner);
         scanner_Layout =findViewById(R.id.scanner);
+
+         loader =findViewById(R.id.loader);
 
         next=findViewById(R.id.next);
         prev=findViewById(R.id.prev);
@@ -228,7 +232,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             ConsumTicket(resultObject.get("id").getAsInt(),linePref.getInt("rideID",-1),resultObject.get("price").getAsInt(),time);
         }
-
 
 
         Log.i("ticket", "Result: "+result);
@@ -347,8 +350,6 @@ public class MainActivity extends AppCompatActivity {
         error_layout.setVisibility(View.GONE);
         scanne_ticket_text.setVisibility(View.GONE);
         successSound.start();
-        TextView pricetv =findViewById(R.id.priceTv);
-        pricetv.setText(""+price +"  DZA");
 
     }
 
@@ -388,6 +389,7 @@ public class MainActivity extends AppCompatActivity {
                 }else {
                     WrongRequest("is paid ");
                 }
+                loader.setVisibility(View.GONE);
                 timerScanner();
             }
 
@@ -400,22 +402,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    int price;
 
     public void getLineResult(){
         myLine=(Line) getIntent().getSerializableExtra("Line");
+        prices=new ArrayList<>();
         prices=myLine.getPrices();
         terminusStationList=new ArrayList<>();
         terminusStationList=myLine.getTerminusStation();
-
+terminusStationList.remove(0);
         choseDerectionAdapter=new ChoseDerectionAdapter(getApplicationContext(),terminusStationList,prices);
         lv_prices.setAdapter(choseDerectionAdapter);
-
         lv_prices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                ConsumTicket(resultObject.get("id").getAsInt(),linePref.getInt("rideID",-1),(int)Integer.valueOf(prices[position]),time);
+                loader.setVisibility(View.VISIBLE);
+                lv_prices.setVisibility(View.GONE);
 
+
+                if (prices.size()-1>=position){
+                    price=(int)Integer.valueOf(prices.get(position));
+                }else
+                    price=(int)Integer.valueOf(prices.get(prices.size()-1));
+
+                ConsumTicket(resultObject.get("id").getAsInt(),linePref.getInt("rideID",-1),price,time);
+
+                TextView targetTv=findViewById(R.id.target_tv);
+                targetTv.setText(terminusStationList.get(position).getName());
+
+                TextView pricetv =findViewById(R.id.priceTv);
+                pricetv.setText(""+price +"  DZA");
+
+//                Log.i("consum","id"+resultObject.get("id").getAsInt()+" rideID"+linePref.getInt("rideID",-1)+"prices "+ prices.toString()+" time"+time);
             }
         });
 

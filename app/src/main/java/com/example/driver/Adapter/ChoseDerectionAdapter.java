@@ -16,15 +16,23 @@ import com.example.driver.model.Line;
 import com.example.driver.model.Station;
 import com.google.android.material.card.MaterialCardView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChoseDerectionAdapter extends ArrayAdapter<Station> {
     List<Station> stations;
-    String[] prices;
-    public ChoseDerectionAdapter(@NonNull Context context, List<Station> objects, String[] prices) {
+    List<String> prices;
+    List<Integer>colors=new ArrayList<>();
+    public ChoseDerectionAdapter(@NonNull Context context, List<Station> objects,List<String> prices) {
         super(context,0, objects);
         this.stations=objects;
         this.prices=prices;
+        this.colors=new ArrayList<>();
+        this.colors.add(R.color.colorPrimary);
+        this.colors.add(R.color.green_light);
+        this.colors.add(R.color.red);
+
+
     }
 
     @NonNull
@@ -38,8 +46,12 @@ public class ChoseDerectionAdapter extends ArrayAdapter<Station> {
         TextView price=convertView.findViewById(R.id.price);
 
         name.setText(stations.get(position).getName()+"");
-//        price.setText(prices[position]+"");
+        if (prices.size()-1>=position){
+            price.setText(prices.get(position)+"");
+        }else
+            price.setText(prices.get(prices.size()-1)+"");
 
+        price.getRootView().setBackgroundColor((int)colors.get(position));
         return convertView;
     }
 }

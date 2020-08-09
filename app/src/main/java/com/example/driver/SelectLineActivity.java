@@ -2,13 +2,17 @@ package com.example.driver;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 
 import com.example.driver.Adapter.LineAdapter;
 import com.example.driver.controller.RetrofitRoutes;
@@ -39,17 +43,27 @@ GridView line_lv;
     List<Position> pathPointList;
     List<Position> stationPositionList;
     SweetAlertDialog sweetAlertDialog;
+    ImageButton refreche;
     LineAdapter lineAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_line);
 getSupportActionBar().hide();
+final Activity activity;
+activity=this;
         lines=new ArrayList<>();
         linePref =getSharedPreferences("linePref", Context.MODE_PRIVATE);
         lineEditor=linePref.edit();
         getAllLine();
         line_lv =  findViewById(R.id.line_lv);
+        refreche =  findViewById(R.id.refreche);
+        refreche.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getAllLine();
+            }
+        });
         line_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -100,6 +114,9 @@ getSupportActionBar().hide();
                 setLines(response.body());
                 lineAdapter=new LineAdapter(getApplicationContext(),lines);
                 line_lv.setAdapter(lineAdapter);
+                if (lines.isEmpty()){
+                    refreche.setVisibility(View.VISIBLE);
+                }
 
             }
 
