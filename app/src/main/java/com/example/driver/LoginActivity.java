@@ -16,13 +16,20 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.driver.controller.ConnexionController;
 import com.example.driver.controller.RetrofitRoutes;
+//import com.example.driver.model.ResponseBody;
+import com.example.driver.model.Affectation;
 import com.example.driver.model.Driver;
+import com.example.driver.model.Line;
 import com.example.driver.model.User;
+import com.example.driver.model.Vehicle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,8 +44,14 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class LoginActivity extends AppCompatActivity {
 
-    SharedPreferences pref;
-    SharedPreferences.Editor prefsEditor;
+    SharedPreferences driverPref,linePref,vehiclePref;
+    SharedPreferences.Editor driverEditor,lineEditor,vehicleEditor;
+
+    String url = ConnexionController.getWebUrl();
+
+//  String url ="http://transport.misc-lab.org/api/";
+
+
 
     SweetAlertDialog sweetAlertDialog;
     EditText emailET,passwordET;
@@ -51,9 +64,16 @@ public class LoginActivity extends AppCompatActivity {
         if (!CheckPermissions())RequestPermissions();
 
 
-        pref =getSharedPreferences("DriverPref", Context.MODE_PRIVATE);
-        if (pref.getInt("id",-1)!=-1){
+        driverPref =getSharedPreferences("DriverPref", Context.MODE_PRIVATE);
+        driverEditor=driverPref.edit();
 
+        linePref =getSharedPreferences("linePref", Context.MODE_PRIVATE);
+        lineEditor=linePref.edit();
+
+        vehiclePref =getSharedPreferences("vehiclePref", Context.MODE_PRIVATE);
+        vehicleEditor=vehiclePref.edit();
+
+        if (driverPref.getInt("id",-1)!=-1){
             startActivity(new Intent(LoginActivity.this, SelectLineActivity.class));
             finish();
         }
@@ -114,19 +134,16 @@ public class LoginActivity extends AppCompatActivity {
 ////
         Gson gson=new GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS").create();
 
-        String url ="http://transport.misc-lab.org/api/";
         Retrofit retrofit=new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         RetrofitRoutes retrofitRoutes=retrofit.create(RetrofitRoutes.class);
 
-         sweetAlertDialog= new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog= new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         sweetAlertDialog. setTitleText("please wait") .show();
 
 
-        pref =getSharedPreferences("DriverPref", Context.MODE_PRIVATE);
-        prefsEditor=pref.edit();
         Call<Driver> login=retrofitRoutes.Login(c);
 
         login.enqueue(new Callback<Driver>() {
@@ -137,16 +154,18 @@ public class LoginActivity extends AppCompatActivity {
                     Driver driver=response.body();
 
                     if (driver.getUser().getRole().equals("driver")){
-                        prefsEditor.putInt("id",driver.getId());
-                        prefsEditor.putInt("userId",driver.getUser().getId());
-                        prefsEditor.putString("username",driver.getUser().getUsername());
-                        prefsEditor.putString("firstname",driver.getUser().getFirstname());
-                        prefsEditor.putString("lastname",driver.getUser().getLastname());
-                        prefsEditor.commit();
-
+                        driverEditor.putInt("id",driver.getId());
+                        driverEditor.putInt("userId",driver.getUser().getId());
+                        driverEditor.putString("username",driver.getUser().getUsername());
+                        driverEditor.putString("firstname",driver.getUser().getFirstname());
+                        driverEditor.putString("lastname",driver.getUser().getLastname());
+                        driverEditor.commit();
                         sweetAlertDialog.dismiss();
-                       startActivity(new Intent(LoginActivity.this, SelectLineActivity.class));
-                       finish();
+                        Intent i=new Intent(getApplication(), SelectLineActivity.class);
+
+                        startActivity(i);
+
+                        finish();
 
                     }else {
                         new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.WARNING_TYPE)
@@ -157,7 +176,7 @@ public class LoginActivity extends AppCompatActivity {
                 }else {
                     sweetAlertDialog.dismiss();
                     new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.WARNING_TYPE)
-                            .setTitleText("Email or Password incorrect "+response.code()) .show();
+                        .setTitleText("Email or Password incorrect "+response.code()).show();
 
                 }
             }
@@ -165,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Driver> call, Throwable t) {
                 Toast.makeText(LoginActivity.this, "Oops !!  Somme things wrong  :", Toast.LENGTH_SHORT).show();
-                Log.i("login", "onFailure: " +t.getCause());
+                Log.i("login", "onFailure : " +t.getMessage());
             }
         });
     }

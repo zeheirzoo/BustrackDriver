@@ -1,16 +1,20 @@
 package com.example.driver.controller;
 
+import com.example.driver.model.Affectation;
 import com.example.driver.model.Driver;
 import com.example.driver.model.Line;
 import com.example.driver.model.Position;
 import com.example.driver.model.Ride;
 import com.example.driver.model.User;
 import com.example.driver.model.Vehicle;
+import com.google.gson.JsonObject;
 
+import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -21,6 +25,9 @@ import retrofit2.http.Path;
 public interface RetrofitRoutes {
 
 //// driver
+//    @POST("login")
+//    Call<Driver>Login(@Body User user);
+
     @POST("login")
     Call<Driver>Login(@Body User user);
 
@@ -28,9 +35,9 @@ public interface RetrofitRoutes {
     Call<Vehicle>UpdatePosition(@Path("id") int id, @Body Position position);
 
 
-//consum/3/3/30/10:10
-    @GET("consum/{id}/{ride}/{price}/{time}")
-    Call<String>consumTicket(@Path("id") int id, @Path("ride") int raid, @Path("price") int price, @Path("time")String time);//consum/3/3/30/10:10
+////consum/3/3/30/10:10
+//    @GET("consum/{id}/{ride}/{price}/{time}")
+//    Call<String>consumTicket(@Path("id") int id, @Path("ride") int raid, @Path("price") int price, @Path("time")String time);//consum/3/3/30/10:10
 
 
 //   ride
@@ -39,9 +46,10 @@ public interface RetrofitRoutes {
 
 
 
-//   line
-    @GET("line")
-    Call<List<Line>>getLines();
+////   line
+//    @GET("line")
+//    Call<List<Line>>getLines();
 
-
+    @GET("driver/{id}")
+    Call<Affectation> getAffectation(@Path("id") int i);
 }

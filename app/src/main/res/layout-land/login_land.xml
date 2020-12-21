@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/map"
-    android:padding="30dp"
     tools:ignore="MissingDefaultResource">
 
 
@@ -86,15 +85,14 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:padding="50dp"
+                    android:paddingHorizontal="10dp"
                     >
                     <TextView
                         android:layout_width="match_parent"
                         android:padding="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_below="@id/badge"
-                        android:textSize="30dp"
+                        android:textSize="20dp"
                         android:gravity="center"
                         android:textStyle="bold"
                         android:textColor="@color/white"
@@ -117,7 +115,7 @@
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:textSize="20dp"
-                        android:text="abcd@gmail.com"
+                        android:text="zaki-dehaba@gmail.com"
                         android:textColor="@color/colorPrimaryDark"
                         android:inputType="textEmailAddress"
                         android:background="@drawable/bg_challenge"
@@ -139,9 +137,9 @@
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:textSize="20dp"
-                        android:text="123456789"
+                        android:text="1996zaki"
                         android:textColor="@color/colorPrimaryDark"
-                        android:inputType="textPassword"
+                        android:inputType="text"
                         android:background="@drawable/bg_challenge"
 
                         />

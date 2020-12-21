@@ -8,15 +8,13 @@ public class Driver {
     String drivinglicense;
     User user;
     String token;
+//    Set<Ride> ride;
 
-    Set<Ride> ride;
-
-    public Driver(int id, String drivinglicense, User user, String token, Set<Ride> ride) {
+    public Driver(int id, String drivinglicense, User user, String token) {
         this.id = id;
         this.drivinglicense = drivinglicense;
         this.user = user;
         this.token = token;
-        this.ride = ride;
     }
 
     public String getToken() {
@@ -30,7 +28,6 @@ public class Driver {
     public Driver(int id, String drivinglicense) {
         this.id = id;
         this.drivinglicense = drivinglicense;
-        this.ride = ride;
     }
 
     public User getUser() {
@@ -49,13 +46,7 @@ public class Driver {
         this.drivinglicense = drivinglicense;
     }
 //
-    public Set<Ride> getRide() {
-        return ride;
-    }
 
-    public void setRide(Set<Ride> ride) {
-        this.ride = ride;
-    }
 
     public int getId() {
         return id;
@@ -72,7 +63,6 @@ public class Driver {
                 ", drivinglicense=" + drivinglicense +
                 ", user=" + user +
                 ", token='" + token + '\'' +
-                ", ride=" + ride +
                 '}';
     }
 }

@@ -13,13 +13,15 @@ public class LineStation  implements Serializable {
     int line_id;
     int station_id;
     int order;
+    String  direction;
     int is_terminus;
 
-    public LineStation(int line_id, int station_id, int order, int is_terminus) {
-        this.line_id = line_id;
-        this.station_id = station_id;
-        this.order = order;
-        this.is_terminus = is_terminus;
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     public int getLine_id() {

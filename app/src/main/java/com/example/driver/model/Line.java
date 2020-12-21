@@ -1,16 +1,7 @@
 package com.example.driver.model;
 
-import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 public class Line implements Serializable {
@@ -23,12 +14,12 @@ public class Line implements Serializable {
     private String colortype;
     private String city;
     private LineType linetype;
-    private List<String> prices;
+    private int prices;
     private List<Station>  station;
     private Station a_b_station;
     private Station b_a_station;
 
-    public Line(int id, int linetype_id, int a_b_id, int b_a_id, int identifier, String colortype, String city, LineType linetype, List<String> prices,
+    public Line(int id, int linetype_id, int a_b_id, int b_a_id, int identifier, String colortype, String city, LineType linetype, int prices,
                 List<Station> station, Station a_b_station, Station b_a_station) {
         this.id = id;
         this.linetype_id = linetype_id;
@@ -52,11 +43,11 @@ public class Line implements Serializable {
         this.linetype = linetype;
     }
 
-    public List<String> getPrices() {
+    public int getPrices() {
         return prices;
     }
 
-    public void setPrices(List<String> prices) {
+    public void setPrices(int prices) {
         this.prices = prices;
     }
 
@@ -196,29 +187,29 @@ public class Line implements Serializable {
 //          }
 //
 //        return positions;
-//    }
-//    public List<Position> getPathPointList() {
-//        List<Position>positions=new ArrayList<>();
-//        for (Station s:station){
-//            for (InterStation interStation:s.getSrcinterstation()){
-//                try {
-//                    JSONArray jsonArray=new JSONArray( interStation.getA_b_path());
-//                    for (int i = 0; i < jsonArray.length(); i++) {
-//                        double[] LatLongs= new Gson().fromJson(jsonArray.get(i).toString(),double[].class) ;
-//                        for (int j = 0; j < LatLongs.length; j++) {
-//                            Position sPosition=new Position(null,LatLongs[0],LatLongs[1]);
-//                            positions.add(sPosition);
-//                        }
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            ;
-//          }
-//
-//        return positions;
-//    }
+////    }
+////    public List<Position> getPathPointList() {
+////        List<Position>positions=new ArrayList<>();
+////        for (Station s:station){
+////            for (InterStation interStation:s.getSrcinterstation()){
+////                try {
+////                    JSONArray jsonArray=new JSONArray( interStation.getA_b_path());
+////                    for (int i = 0; i < jsonArray.length(); i++) {
+////                        double[] LatLongs= new Gson().fromJson(jsonArray.get(i).toString(),double[].class) ;
+////                        for (int j = 0; j < LatLongs.length; j++) {
+////                            Position sPosition=new Position(null,LatLongs[0],LatLongs[1]);
+////                            positions.add(sPosition);
+////                        }
+////                    }
+////                } catch (JSONException e) {
+////                    e.printStackTrace();
+////                }
+////            }
+////            ;
+////          }
+////
+////        return positions;
+////    }
 
     @Override
     public String toString() {
@@ -231,7 +222,7 @@ public class Line implements Serializable {
                 ", colortype='" + colortype + '\'' +
                 ", city='" + city + '\'' +
                 ", linetype=" + linetype +
-                ", prices=" + prices.toString() +
+                ", prices=" + prices +
                 ", station=" + station +
                 ", a_b_station=" + a_b_station +
                 ", b_a_station=" + b_a_station +

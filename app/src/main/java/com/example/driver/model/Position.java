@@ -10,19 +10,16 @@ public class Position implements Serializable {
     private int id;
     private String address;
     private double latitude,longitude;
-    private Date created_at;
 
     public Position(int id, String address, double latitude, double longitude, Date created_at) {
         this.id = id;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.created_at = created_at;
     }
 
-    public Position(String address,
-                    double latitude, double longitude) {
-        this.address = address;
+    public Position(double latitude, double longitude) {
+        this.address = "address";
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -59,13 +56,7 @@ public class Position implements Serializable {
         this.longitude = longitude;
     }
 
-    public Date getCreated_at() {
-        return created_at;
-    }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
-    }
 
     @Override
     public String toString() {
@@ -74,7 +65,6 @@ public class Position implements Serializable {
                 ", address='" + address + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", created_at=" + created_at +
                 '}'+"\n";
     }
 }

@@ -9,12 +9,12 @@ public class Ride implements Serializable {
     private int driver_id;
     private int vehicle_id;
     private int line_id;
-    private int current_station_id;
+    private Integer current_station_id;
     private Integer current_intermediary_point_id;
     private String direction;
     private Date departure_date;
     private Date finish_date;
-    private Date create_at;
+    private Date created_at;
     private Line line;
     private Vehicle vehicle;
     private Station station;
@@ -24,7 +24,7 @@ public class Ride implements Serializable {
                 int vehicle_id, int line_id,
                 int current_station_id,
                 String direction, Date departure_date,
-                Date finish_date, Date create_at) {
+                Date finish_date, Date created_at) {
 
         this.driver_id = driver_id;
         this.vehicle_id = vehicle_id;
@@ -33,10 +33,10 @@ public class Ride implements Serializable {
         this.direction = direction;
         this.departure_date = departure_date;
         this.finish_date = finish_date;
-        this.create_at = create_at;
+        this.created_at = created_at;
     }
 
-    public Ride(int id, int driver_id, int vehicle_id, int line_id, int current_station_id, Integer current_intermediary_point_id, String direction, Date departure_date, Date finish_date, Date create_at, Line line, Vehicle vehicle, Station station, IntermediaryPoint intermediary_point) {
+    public Ride(int id, int driver_id, int vehicle_id, int line_id, int current_station_id, Integer current_intermediary_point_id, String direction, Date departure_date, Date finish_date, Date created_at, Line line, Vehicle vehicle, Station station, IntermediaryPoint intermediary_point) {
         this.id = id;
         this.driver_id = driver_id;
         this.vehicle_id = vehicle_id;
@@ -46,12 +46,22 @@ public class Ride implements Serializable {
         this.direction = direction;
         this.departure_date = departure_date;
         this.finish_date = finish_date;
-        this.create_at = create_at;
+        this.created_at = created_at;
         this.line = line;
         this.vehicle = vehicle;
         this.station = station;
         this.intermediary_point = intermediary_point;
     }
+
+    public Ride(){
+
+    }
+//    public Ride(int driver_id, int vehicle_id, int line_id, String direction) {
+//        this.driver_id = driver_id;
+//        this.vehicle_id = vehicle_id;
+//        this.line_id = line_id;
+//        this.direction = direction;
+//    }
 
     public int getId() {
         return id;
@@ -126,11 +136,11 @@ public class Ride implements Serializable {
     }
 
     public Date getCreate_at() {
-        return create_at;
+        return created_at;
     }
 
-    public void setCreate_at(Date create_at) {
-        this.create_at = create_at;
+    public void setCreate_at(Date created_at) {
+        this.created_at = created_at;
     }
 
     public Line getLine() {
@@ -178,7 +188,7 @@ public class Ride implements Serializable {
                 ", direction='" + direction + '\'' +
                 ", departure_date=" + departure_date +
                 ", finish_date=" + finish_date +
-                ", create_at=" + create_at +
+                ", created_at=" + created_at +
                 ", line=" + line +
                 ", vehicle=" + vehicle +
                 ", station=" + station +

@@ -54,12 +54,12 @@ public class test extends Activity{
         lines=new ArrayList<>();
 //
 
-        btnSpeak.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getAllLine();
-            }
-        });
+//        btnSpeak.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getAllLine();
+//            }
+//        });
         line_lv =  findViewById(R.id.line_lv);
 //        line_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //           @Override
@@ -71,41 +71,41 @@ public class test extends Activity{
 //        });
     }
 
-    private void getAllLine() {
-        Gson gson=new GsonBuilder().serializeNulls().create();
-
-        String url ="http://transport.misc-lab.org/api/";
-        Retrofit retrofit=new Retrofit.Builder()
-                .baseUrl(url)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-        RetrofitRoutes retrofitRoutes=retrofit.create(RetrofitRoutes.class);
-
-        sweetAlertDialog= new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        sweetAlertDialog. setTitleText("please wait") .show();
-
-
-        Call<List<Line>> call=retrofitRoutes.getLines();
-
-        call.enqueue(new Callback<List<Line>>() {
-            @Override
-            public void onResponse(Call<List<Line>> call, Response<List<Line>> response) {
-                sweetAlertDialog.dismiss();
-                setLines(response.body());
-                lineAdapter=new LineAdapter(getApplicationContext(),lines);
-                line_lv.setAdapter(lineAdapter);
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Line>> call, Throwable t) {
-                sweetAlertDialog.dismiss();
-                new SweetAlertDialog(getApplicationContext(), SweetAlertDialog.ERROR_TYPE).setTitleText("Error"+t.getCause()) .show();
-                Log.i("getLine", "onFailure: "+t.getCause());
-            }
-        });
-
-    }
+//    private void getAllLine() {
+//        Gson gson=new GsonBuilder().serializeNulls().create();
+//
+//        String url ="http://transport.misc-lab.org/api/";
+//        Retrofit retrofit=new Retrofit.Builder()
+//                .baseUrl(url)
+//                .addConverterFactory(GsonConverterFactory.create(gson))
+//                .build();
+//        RetrofitRoutes retrofitRoutes=retrofit.create(RetrofitRoutes.class);
+//
+//        sweetAlertDialog= new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+//        sweetAlertDialog. setTitleText("please wait") .show();
+//
+//
+//        Call<List<Line>> call=retrofitRoutes.getLines();
+//
+//        call.enqueue(new Callback<List<Line>>() {
+//            @Override
+//            public void onResponse(Call<List<Line>> call, Response<List<Line>> response) {
+//                sweetAlertDialog.dismiss();
+//                setLines(response.body());
+//                lineAdapter=new LineAdapter(getApplicationContext(),lines);
+//                line_lv.setAdapter(lineAdapter);
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Line>> call, Throwable t) {
+//                sweetAlertDialog.dismiss();
+//                new SweetAlertDialog(getApplicationContext(), SweetAlertDialog.ERROR_TYPE).setTitleText("Error"+t.getCause()) .show();
+//                Log.i("getLine", "onFailure: "+t.getCause());
+//            }
+//        });
+//
+//    }
 
     public void setLines(List<Line> lines) {
         this.lines = lines;

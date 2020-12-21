@@ -21,6 +21,7 @@
         android:layout_toLeftOf="@id/scanner"
         >
         <RelativeLayout
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:background="@drawable/bg_circle_primary"
             android:layout_alignParentRight="true"
@@ -40,18 +41,19 @@
 
 <RelativeLayout
     android:id="@+id/scanner"
-    android:layout_width="150dp"
+    android:layout_width="200dp"
+    android:visibility="gone"
     android:layout_above="@id/scroll_menu"
     android:background="@color/gray"
     android:layout_margin="1dp"
-    android:visibility="gone"
+
     android:layout_alignParentTop="true"
     android:layout_alignParentRight="true"
     android:layout_height="wrap_content">
     <com.budiyev.android.codescanner.CodeScannerView
         android:id="@+id/scanner_view"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="200dp"
+                android:layout_height="100dp"
         android:layout_marginTop="2dp"
         android:elevation="10dp"
         app:autoFocusButtonColor="@color/white"
@@ -62,7 +64,7 @@
         app:frameAspectRatioWidth="1"
         app:frameColor="@color/white"
         app:frameCornersRadius="5dp"
-        app:frameCornersSize="50dp"
+        app:frameCornersSize="30dp"
         app:frameSize="0.9"
         app:frameThickness="10dp"
         app:maskColor="#6D85BBE6" />
@@ -89,12 +91,11 @@ android:textSize="20dp"
 
 </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/price_layout"
         android:orientation="vertical"
         android:layout_below="@id/scanner_view"
         android:layout_width="match_parent"
-        android:padding="5dp"
         android:visibility="gone"
         android:layout_height="match_parent">
 
@@ -109,11 +110,12 @@ android:textSize="20dp"
             style="?android:attr/progressBarStyleLarge"
             android:indeterminateTint="@color/white"
             android:elevation="10dp"
+            android:background="@color/colorAccent"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </ProgressBar>
 
- </LinearLayout>
+ </RelativeLayout>
 
 
     <LinearLayout
@@ -189,11 +191,11 @@ android:textSize="20dp"
     <ImageButton
         android:onClick="onClickItem"
         android:id="@+id/prev"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@android:color/darker_gray"
         android:layout_alignParentBottom="true"
-android:layout_margin="2dp"
+        android:layout_margin="2dp"
         android:layout_alignParentLeft="true"
         android:src="@drawable/ic_arrow_back_black_50dp"
 
@@ -202,8 +204,8 @@ android:layout_margin="2dp"
         android:onClick="onClickItem"
         android:id="@+id/next"
         android:layout_margin="2dp"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@color/colorPrimaryDark3"
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_arrow_forward_black_50dp"
@@ -212,7 +214,7 @@ android:layout_margin="2dp"
         />
     <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="70dp"
         android:background="#E9FFFFFF"
         android:layout_margin="2dp"
 
@@ -233,8 +235,8 @@ android:layout_margin="2dp"
             >
 
             <LinearLayout
-                android:layout_width="150dp"
-                android:layout_height="match_parent"
+                android:layout_width="120dp"
+                android:layout_height="70dp"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
                 android:background="@color/colorPrimary"
@@ -246,7 +248,7 @@ android:layout_margin="2dp"
                 <ImageView
                     android:src="@drawable/ic_home"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:background="@null"
                     />
                 <TextView
@@ -256,12 +258,12 @@ android:layout_margin="2dp"
                     android:gravity="center"
                     android:textStyle="bold"
                     
-                android:textSize="15dp" 
+                android:textSize="10dp" 
                     android:text="Home"/>
             </LinearLayout>
             <LinearLayout
-                android:layout_width="150dp"
-                android:layout_height="match_parent"
+               android:layout_width="150dp"
+                android:layout_height="70dp"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
                 android:background="@color/red"
@@ -274,7 +276,7 @@ android:layout_margin="2dp"
                 <ImageView
                     android:src="@drawable/ic_warning_black_24dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:background="@null"
 
                     />
@@ -285,12 +287,12 @@ android:layout_margin="2dp"
                     android:gravity="center"
                     android:textStyle="bold"
                     
-                android:textSize="15dp" 
+                android:textSize="10dp" 
                     android:text="Alert"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="150dp"
-                android:layout_height="match_parent"
+                android:layout_height="70dp"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
                 android:layout_marginRight="10dp"
@@ -302,7 +304,7 @@ android:layout_margin="2dp"
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:background="@null"
                     android:src="@drawable/ic_rv_hookup_black_24dp" />
 
@@ -313,12 +315,12 @@ android:layout_margin="2dp"
                     android:gravity="center"
                     android:textStyle="bold"
 
-                android:textSize="15dp"
+                android:textSize="10dp"
                     android:text="Avancer vers le fond du bus"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="150dp"
-                android:layout_height="match_parent"
+                android:layout_height="70dp"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
                 android:layout_marginRight="10dp"
@@ -331,7 +333,7 @@ android:layout_margin="2dp"
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:background="@null"
                     android:src="@drawable/ic_smoke_free_black_24dp"
 
@@ -344,13 +346,12 @@ android:layout_margin="2dp"
                     android:gravity="center"
                     android:textStyle="bold"
                     
-                android:textSize="15dp" 
-                    android:text="Le tabac est
-                    interdit "/>
+                android:textSize="10dp" 
+                    android:text="Le tabac est interdit "/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="150dp"
-                android:layout_height="match_parent"
+                android:layout_height="70dp"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
                 android:layout_marginRight="10dp"
@@ -362,7 +363,7 @@ android:layout_margin="2dp"
                 <ImageView
                     android:src="@drawable/ic_record_voice_over_black_24dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:background="@null"
                     />
                 <TextView
@@ -372,14 +373,13 @@ android:layout_margin="2dp"
                     android:gravity="center"
                     android:textStyle="bold"
                     
-                android:textSize="15dp" 
-                    android:text="Veuillez SVP
-                    respecter le silence"/>
+                android:textSize="10dp" 
+                    android:text="Veuillez SVP respecter le silence"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="150dp"
-                android:layout_height="match_parent"
+                android:layout_height="70dp"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
                 android:layout_marginRight="10dp"
@@ -391,7 +391,7 @@ android:layout_margin="2dp"
                 <ImageView
                     android:src="@drawable/ic_account_box_black_24dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:background="@null"
 
                     />
@@ -402,14 +402,14 @@ android:layout_margin="2dp"
                     android:gravity="center"
                     android:textStyle="bold"
                     
-                android:textSize="15dp" 
+                android:textSize="10dp" 
                     android:text="Profile"/>
             </LinearLayout>
 
 
             <LinearLayout
                 android:layout_width="150dp"
-                android:layout_height="match_parent"
+                android:layout_height="70dp"
                 android:orientation="vertical"
                 android:onClick="onClickItem"
                 android:layout_marginRight="10dp"
@@ -421,7 +421,7 @@ android:layout_margin="2dp"
                 <ImageView
                     android:src="@drawable/ic_help"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:background="@null"
 
                     />
@@ -432,12 +432,12 @@ android:layout_margin="2dp"
                     android:gravity="center"
                     android:textStyle="bold"
                     
-                android:textSize="15dp" 
+                android:textSize="10dp" 
                     android:text="help ?"/>
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="150dp"
+                android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:onClick="onClickItem"

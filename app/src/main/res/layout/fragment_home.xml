@@ -12,38 +12,42 @@
 
     <RelativeLayout android:id="@+id/main_layout"
         android:layout_width="match_parent"
-
         android:layout_height="match_parent">
+
+
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:elevation="10dp"
-            android:layout_centerHorizontal="true"
+            android:visibility="gone"
+
+            android:layout_alignParentEnd="true"
             android:layout_height="wrap_content">
             <Button
                 android:id="@+id/nav_line"
                 android:layout_width="wrap_content"
-                android:layout_height="80dp"
+                android:layout_height="50dp"
                 android:layout_margin="5dp"
-                android:padding="20dp"
+                android:padding="10dp"
                 android:background="@color/colorPrimary"
                 android:textColor="@color/white"
-                android:textSize="20dp"
+                android:textSize="10dp"
                 android:text="line"
                 android:drawableLeft="@drawable/ic_line"
-                android:drawablePadding="20dp"
+                android:drawablePadding="10dp"
                 android:layout_toRightOf="@id/nav_map" />
             <Button
                 android:id="@+id/nav_map"
                 android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:layout_margin="5dp"
-                android:padding="20dp"
-                android:text=""
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:text="map"
+                android:background="@color/gray"
+                android:layout_marginTop="5dp"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/white"
-                android:textSize="20dp"
+                android:textSize="10dp"
                 android:drawableLeft="@drawable/ic_map"
                 android:drawablePadding="20dp"
                 />
@@ -52,49 +56,49 @@
         </LinearLayout>
         <LinearLayout
             android:elevation="10dp"
+            android:visibility="gone"
             android:id="@+id/correct_position"
             android:orientation="horizontal"
-             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <Button
                 android:drawableTop="@drawable/ic_undo_black_24dp"
                 android:id="@+id/prev"
-                android:layout_width="100dp"
-                android:layout_height="80dp"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
                 android:layout_below="@id/next"
                 android:layout_margin="5dp"
                 android:background="@color/red"
                 android:text="reculler"
                 android:textColor="@color/white"
-                android:textSize="15dp"
+                android:textSize="10dp"
                 android:padding="5dp"/>
 
             <Button
                 android:drawableTop="@drawable/ic_redo_black_24dp"
                 android:id="@+id/next"
-                android:layout_width="100dp"
-                android:layout_height="80dp"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
                 android:layout_margin="5dp"
                 android:background="@color/colorPrimary2"
                 android:text="Avancer"
                 android:textColor="@color/white"
-                android:textSize="15dp"
+                android:textSize="10dp"
                 android:padding="5dp"/>
         </LinearLayout>
 
 
             <Button
-                android:drawableTop="@drawable/ic_directions_black_24dp"
+                android:drawableStart="@drawable/ic_directions_black_24dp"
                 android:id="@+id/start_ride"
                 android:layout_width="140dp"
-                android:layout_height="100dp"
-                android:layout_margin="10dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
                 android:background="@color/green_light"
                 android:text="Start ride"
                 android:textColor="@color/white"
-                android:textSize="15dp"
+                android:textSize="12dp"
                 android:padding="5dp"/>
 
 
@@ -109,6 +113,7 @@
         <RelativeLayout android:id="@+id/map_layout"
             android:layout_width="match_parent"
             android:visibility="gone"
+
             android:layout_height="match_parent">
 
             <org.osmdroid.views.MapView
@@ -119,13 +124,15 @@
             <RelativeLayout
                 android:layout_alignParentBottom="true"
                 android:layout_width="wrap_content"
+
                 android:layout_height="wrap_content">
 
                 <ImageButton
                     android:id="@+id/zoomin"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:padding="10dp"
                     android:layout_alignParentStart="true"
                     android:background="@drawable/bg_circle"
                     android:src="@drawable/ic_zoom_in_black_24dp"
@@ -134,7 +141,7 @@
                     android:id="@+id/zoomout"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_margin="15dp"
+                    android:layout_margin="10dp"
                     android:layout_below="@id/zoomin"
                     android:background="@drawable/bg_circle"
                     android:src="@drawable/ic_zoom_out_black_24dp"
@@ -144,7 +151,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_alignParentStart="true"
-                    android:layout_margin="15dp"
+                    android:layout_margin="10dp"
                     android:layout_below="@id/zoomout"
                     android:background="@drawable/bg_circle_primary"
                     android:src="@drawable/ic_gps_fixed_black_24dp"

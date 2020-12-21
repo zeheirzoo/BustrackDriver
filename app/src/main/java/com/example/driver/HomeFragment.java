@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
@@ -34,6 +35,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -51,7 +53,9 @@ import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.example.driver.Adapter.LineAdapter;
+import com.example.driver.controller.ConnexionController;
 import com.example.driver.controller.RetrofitRoutes;
+import com.example.driver.controller.SocketController;
 import com.example.driver.model.InterStation;
 import com.example.driver.model.IntermediaryPoint;
 import com.example.driver.model.Line;
@@ -59,6 +63,7 @@ import com.example.driver.model.Position;
 import com.example.driver.model.Ride;
 import com.example.driver.model.Station;
 import com.example.driver.model.Vehicle;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.shuhart.stepview.StepView;
@@ -99,8 +104,9 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 
 public class HomeFragment extends Fragment {
+//    String url ="http://transport.misc-lab.org/api/";
 
-    FragmentTransaction fragmentTransaction;
+    String url = ConnexionController.getWebUrl();
     FragmentManager fragmentManager;
     Vibrator vibrator;
     RelativeLayout mapLayout,lineLayout,main_layout,getLine;
@@ -123,20 +129,21 @@ public class HomeFragment extends Fragment {
     List<Position> stationPositionList;
     TextView startStation,targetStation, timeTV,dateTV;
     int CurrentStation=1;
-    SweetAlertDialog sweetAlertDialog;
+    SweetAlertDialog sweetAlertDialog,StationsweetAlertDialog;
     MyTextToSpeak myTextToSpeak;
     String lineColorType;
-
+    Gson gson;
 int driver_id;
 int vehicle_id;
 int line_id;
 String direction;
 int current_station_id;
-SharedPreferences pref;
+SharedPreferences pref,vehiclePref;
 SharedPreferences.Editor editor;
 SharedPreferences linePref;
 SharedPreferences.Editor lineEditor;
 Line myLine;
+EditText bus_id;
 boolean online =false ;
 
 
@@ -146,24 +153,34 @@ boolean online =false ;
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_home, container, false);
-        handler = new android.os.Handler();
+//        handler = new android.os.Handler();
         fragmentManager=getChildFragmentManager();
 
 //============
-        pref =getActivity().getSharedPreferences("DriverPref", Context.MODE_PRIVATE);
+        pref =this.getActivity().getSharedPreferences("DriverPref", Context.MODE_PRIVATE);
         editor=pref.edit();
         linePref =getActivity().getSharedPreferences("linePref", Context.MODE_PRIVATE);
         lineEditor=linePref.edit();
-        Log.i("driverPref", "pref :  "+pref.getAll());
-        Log.i("driverPref2", "line pref :  "+linePref.getAll());
+        vehiclePref =getActivity().getSharedPreferences("vehiclePref", Context.MODE_PRIVATE);
+
+        gson=new GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS").create();
+
+
+
 
 //============
 //============
-
+        StationsweetAlertDialog= new SweetAlertDialog(getContext(), SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        StationsweetAlertDialog.setCustomImage(R.drawable.ic_bus_station_foreground);
 //============
 
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
@@ -228,18 +245,13 @@ boolean online =false ;
         start_ride.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                driver_id=pref.getInt("id",-1);
-                vehicle_id=1;
-                line_id=linePref.getInt("line_id",-1);
-                current_station_id=linePref.getInt("current_station_id",-1);
-                direction=linePref.getString("direction","a_b");
-                createRide(new Ride(driver_id,vehicle_id,line_id,current_station_id,direction,new Date(),null,new Date()));
+                createRide();
             }
         });
 
 
         //========================================== line ===============================
+
         statusViewScroller =view.findViewById(R.id.status_view);
          next =view.findViewById(R.id.next);
         next.setOnClickListener(new View.OnClickListener() {
@@ -274,20 +286,14 @@ boolean online =false ;
 
 
 
-
-
-
-
-
-
 //        ==================
 
          zoomController(view);
 //          ============
 //
-            map.setTileSource(TileSourceFactory.MAPNIK);
-            map.setMultiTouchControls(true);
-            map.setMinZoomLevel(5.0);
+        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setMultiTouchControls(true);
+        map.setMinZoomLevel(5.0);
 
         RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(getContext(), map);
         mRotationGestureOverlay.setEnabled(true);
@@ -307,62 +313,13 @@ boolean online =false ;
                 }
             });
 
-//        locationMethode(getContext());
+        locationMethode(getContext());
 
-            if (linePref.getBoolean("online",false)){
-            }
+        if (linePref.getBoolean("online",false)){
+        }
 
 //
 
-
-
-
-
-
-
-
-// To retrieve object in second Activity
-        myLine=(Line) getActivity().getIntent().getSerializableExtra("Line");
-        if (myLine!=null){
-            if (linePref.getString("direction","")=="a_b"){
-                getStations(myLine.getStation());
-
-            }else {
-                getStationsB(myLine.getStation());
-            }
-            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
-            statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size()+1);
-
-
-            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
-            statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
-
-            startStation.setText(stationNamesStrings.get(0));
-            targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
-
-            Position p=stationPositionList.get(0);
-            myLocalPoint = new GeoPoint(p.getLatitude(), p.getLongitude());
-            lineColorType=myLine.getColortype();
-            mapController = map.getController();
-            mapController.setCenter(myLocalPoint);
-            startMarker.setPosition(myLocalPoint);
-            mapController.setZoom(17.0);
-
-            GetRoute(pathPointList);
-            drawStationMarker(stationPositionList);
-// stationNamesStrings=new ArrayList<>();
-//    stationTitle=new ArrayList<>();
-//    stationsAndInerStationsPositionList=new ArrayList<>();
-//    stationPositionList=new ArrayList<>();
-//    pathPointList=new ArrayList<>();
-            Log.i("test", "stationNamesStrings : "+stationNamesStrings.size());
-            Log.i("test", "stationsAndInerStationsPositionList: "+stationsAndInerStationsPositionList.size());
-            Log.i("test", "stationTitle : "+stationTitle.size());
-            Log.i("test", "stationPositionList: "+stationPositionList.size());
-
-        }else {
-            new SweetAlertDialog(getContext(),SweetAlertDialog.ERROR_TYPE).setTitleText("my line  "+myLine).show();
-        }
 
             return view;
         }
@@ -384,6 +341,58 @@ boolean online =false ;
         newtimer.start();
     }
 
+    SocketController socketController;
+    @Override
+    public void onStart() {
+        super.onStart();
+         socketController=new SocketController(getActivity());
+         socketController.openConnection();
+
+// To retrieve object in second Activity
+//        myLine=(Line) getActivity().getIntent().getSerializableExtra("Line");
+        String  lineString=linePref.getString("line_string"," empty ");
+        myLine=gson.fromJson(lineString,Line.class);
+
+        Log.i("login_Myline", "Myline : " +myLine.toString());
+
+
+
+
+
+        if (myLine!=null){
+            if (linePref.getString("direction","a_b")=="a_b"){
+                getStations(myLine.getStation());
+            }else {
+                getStationsB(myLine.getStation());
+            }
+
+            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
+            statusViewScroller.getStatusView().setStepCount(stationNamesStrings.size());
+
+            startStation.setText(stationNamesStrings.get(0));
+            targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
+
+            Position p=stationPositionList.get(0);
+            myLocalPoint = new GeoPoint(p.getLatitude(), p.getLongitude());
+            lineColorType=myLine.getColortype();
+            mapController = map.getController();
+            mapController.setCenter(myLocalPoint);
+            startMarker.setPosition(myLocalPoint);
+            mapController.setZoom(17.0);
+
+            GetRoute(pathPointList);
+            drawStationMarker(stationPositionList);
+
+            Log.i("test", "stationNamesStrings : "+stationNamesStrings.size());
+            Log.i("test", "stationsAndInerStationsPositionList: "+stationsAndInerStationsPositionList.size());
+            Log.i("test", "stationTitle : "+stationTitle.size());
+            Log.i("test", "stationPositionList: "+stationPositionList.size());
+
+        }else {
+            new SweetAlertDialog(getContext(),SweetAlertDialog.ERROR_TYPE).setTitleText("my line  "+myLine).show();
+        }
+    }
+
     private void zoomController(View view) {
         zoomin=view.findViewById(R.id.zoomin);
         zoomout=view.findViewById(R.id.zoomout);
@@ -403,6 +412,7 @@ boolean online =false ;
         });
     }
 
+    @SuppressLint("MissingPermission")
     public void locationMethode(Context ctx) {
 
             LocationManager locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
@@ -418,12 +428,8 @@ boolean online =false ;
 
             } else provider = LocationManager.GPS_PROVIDER;
 
-
-
-
-
             if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
             if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -432,7 +438,7 @@ boolean online =false ;
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             }
 
-            Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
+            @SuppressLint("MissingPermission") Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
             if (lastKnownLocation!=null) {
                 latitude = lastKnownLocation.getLatitude();
                 longitude = lastKnownLocation.getLongitude();
@@ -520,7 +526,7 @@ boolean online =false ;
         map.invalidate();
         stationDetector();
 
-        updatePosition(1,p);
+        updatePosition(vehicle_id,p);
 
     }
 
@@ -541,7 +547,8 @@ boolean online =false ;
 
         stationDetector();
 
-        updatePosition(1,p);
+        updatePosition(vehicle_id,p);
+
     }
 
     public void stationDetector() {
@@ -557,42 +564,47 @@ boolean online =false ;
             ((MainActivity) getActivity()).openScanner(false);
             new SweetAlertDialog(getContext(),SweetAlertDialog.SUCCESS_TYPE)
                     .setTitleText("the end of our travel ")
-                    .setConfirmButton("getnew ride ", new SweetAlertDialog.OnSweetClickListener() {
+                    .setConfirmButton( "getnew ride ", new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
             sweetAlertDialog.dismiss();
-//                            Collections.reverse((List) stationNamesStrings);
-//                            Collections.reverse((List) stationsAndInerStationsPositionList);
-//                            statusViewScroller.getStatusView().setStatusList(stationNamesStrings);
-//                            statusViewScroller.getStatusView().setCurrentCount(1);
-//                            statusViewScroller.scrollToStep(1);
-//                            startStation.setText(stationNamesStrings.get(0)+"");
-//                            targetStation.setText(stationNamesStrings.get(stationNamesStrings.size()-1));
-
+                            directionDetector();
                         }
                     }).show();
 
         }else {
             if (!stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 2).isEmpty() && stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1).isEmpty()) {
                 //            Toasty.success(getContext(), "الانطلاق محطة " +"\n "+stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount())).show();
-                ((MainActivity) getActivity()).openScanner(false);
+//                ((MainActivity) getActivity()).openScanner(false);
 
             }
             if (!stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount()).isEmpty()) {
                 myTextToSpeak.speakOut(" next station " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount()), bip);
                 Toasty.success(getContext(), "المحطة القادمة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount())).show();
-                ((MainActivity) getActivity()).openScanner(true);
+//                ((MainActivity) getActivity()).openScanner(true);
 
             }
             if (!stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1).isEmpty()) {
                 myTextToSpeak.speakOut("Station " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1), bip);
-                Toasty.success(getContext(), "محطة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)).show();
-                sweetAlertDialog. setTitleText( "Station "   + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)) .show();
-                timer();
-                ((MainActivity) getActivity()).openScanner(true);
+//                Toasty.success(getContext(), "محطة" + "\n " + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)).show();
+//                StationsweetAlertDialog. setTitleText( "Station "   + stationNamesStrings.get(statusViewScroller.getStatusView().getCurrentCount() - 1)) .show();
+//                timer();
+//                ((MainActivity) getActivity()).openScanner(true);
             }
         }
 
+    }
+
+    public  void directionDetector(){
+        direction=linePref.getString("direction","a_b");
+        if( direction=="a_b" ){
+            getStationsB(myLine.getStation());
+            lineEditor.putString("direction","b_a");
+        }else{
+            getStations(myLine.getStation());
+            lineEditor.putString("direction","a_b");
+        }
+        lineEditor.commit();
     }
 
     public void timer(){
@@ -602,14 +614,24 @@ boolean online =false ;
                 //new intent here
                 sweetAlertDialog.dismiss();
             }
-        }, 10000);
+        }, 5000);
     }
 
-    private void createRide(final Ride ride) {
+    private void createRide() {
+        driver_id=pref.getInt("id",-1);
+        line_id=linePref.getInt("line_id",-1);
+        current_station_id=linePref.getInt("current_station_id",-1);
+        vehicle_id=vehiclePref.getInt("vehicle_id",-1);
+        direction=linePref.getString("direction","a_b");
+        final Ride ride = new  Ride();
+        ride.setDriver_id(driver_id);
+        ride.setVehicle_id(vehicle_id);
+        ride.setLine_id(line_id);
+        ride.setDirection(direction);
+        Log.i("createRide", "ride : "+ ride+"" );
+
+
         Gson gson=new GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS").create();
-
-
-        String url ="http://transport.misc-lab.org/api/";
         Retrofit retrofit=new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -618,9 +640,6 @@ boolean online =false ;
 
         sweetAlertDialog= new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
         sweetAlertDialog. setTitleText("please wait") .show();
-
-
-
         Call<Ride> call=retrofitRoutes.StartRide(ride);
 
         call.enqueue(new Callback<Ride>() {
@@ -636,12 +655,11 @@ boolean online =false ;
                   lineEditor.putInt("rideID",response.body().getId());
                   lineEditor.commit();
 
-                 ((MainActivity) getActivity()).openScanner(true);
+//                 ((MainActivity) getActivity()).openScanner(true);
              }
               else {
-
-                    new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE).setTitleText("StART Ride failed") .show();
-
+                  new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE).setTitleText("StART Ride failed") .show();
+                 Log.e("ride", "ride : "+ ride+" "+response );
 
               }
             }
@@ -657,11 +675,11 @@ boolean online =false ;
         });
     }
 
-    private void updatePosition(int id,Position position) {
+    private void updatePosition(final int id, final Position position) {
+
         Gson gson=new GsonBuilder().serializeNulls().create();
 
 
-        String url ="http://transport.misc-lab.org/api/";
         Retrofit retrofit=new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -677,10 +695,12 @@ boolean online =false ;
             public void onResponse(Call<Vehicle> call, Response<Vehicle> response) {
 
                 if (response.isSuccessful()&&response.code()==200){
-                    Log.i("successful", "onResponse: UpdatePosition  "+response.body());
+                    Log.i("update position", "onResponse: UpdatePosition  "+response.body());
+                    socketController.updatePosition(position,id);
                 }else{
                     Toasty.warning(getContext(),response+"").show();
 
+                    Log.i("update position", "onResponse: UpdatePosition  "+response.body());
 
                 }
 
@@ -688,7 +708,9 @@ boolean online =false ;
 
             @Override
             public void onFailure(Call<Vehicle> call, Throwable t) {
-Toasty.error(getContext(),t.getCause()+"").show();
+            Toasty.error(getContext(),t.getCause()+"").show();
+                Log.i("update_position", "onResponse: UpdatePosition  "+t.getCause()+"");
+
             }
         });
     }
@@ -699,49 +721,58 @@ Toasty.error(getContext(),t.getCause()+"").show();
     stationsAndInerStationsPositionList=new ArrayList<>();
     stationPositionList=new ArrayList<>();
     pathPointList=new ArrayList<>();
-    for (Station s:stations){
-        if (s.getA_b_latitude()!=0.0){
+        for (Station s:stations ) {
+          if (s.getA_b_latitude()!=0.0){
             List<InterStation>interStationList=new ArrayList<>();
+
             interStationList=s.getSrcinterstation();
+            stationNamesStrings.add((s.getName()));
+            stationTitle.add((s.getName()));
 
-                stationNamesStrings.add((s.getName()));
-                stationTitle.add((s.getName()));
-                if(!s.equals(stations.get(stations.size()-1))){
-                    stationNamesStrings.add("");
-                    stationNamesStrings.add("");
-                    stationNamesStrings.add("");
+            if(!s.equals(stations.get(stations.size()-1))){
+                stationNamesStrings.add("");
+                stationNamesStrings.add("");
+                stationNamesStrings.add("");
+            }
+
+            Position sPosition=new Position(s.getA_b_latitude(),s.getA_b_longitude());
+            stationPositionList.add(sPosition);
+            stationsAndInerStationsPositionList.add(sPosition);
+
+            if(interStationList.size()>0){
+                for(IntermediaryPoint point : PointInOrder(interStationList.get(0).getIntermediary_point()) ){
+                    Position InterS_Position;
+                    InterS_Position = new Position( point.getA_b_latitude(), point.getA_b_longitude());
+                    stationsAndInerStationsPositionList.add(InterS_Position);
                 }
-
-            Position sPosition=new Position(s.getA_b_address(),s.getA_b_latitude(),s.getA_b_longitude());
-                stationPositionList.add(sPosition);
-                stationsAndInerStationsPositionList.add(sPosition);
-
-                if(interStationList.size()>0){
-                    for(IntermediaryPoint point : PointInOrder(interStationList.get(0).getIntermediary_point()) ){
-                        Position InterS_Position;
-                        InterS_Position = new Position(point.getA_b_address(), point.getA_b_latitude(), point.getA_b_longitude());
-                        stationsAndInerStationsPositionList.add(InterS_Position);
-                    }
-
-    //           Path point list
-                    JSONArray jsonArray;
-                    for (InterStation interStation:interStationList){
+//           Path point list
+                JSONArray jsonArray;
+                for (InterStation interStation:interStationList){
                         try {
                             jsonArray=new JSONArray( interStation.getA_b_path());
                             for (int i = 0; i < jsonArray.length(); i++) {
-                                double[] LatLongs= new Gson().fromJson(jsonArray.get(i).toString(),double[].class) ;
-                                Position position=new Position(null,LatLongs[0],LatLongs[1]);
+//
+                                String p=jsonArray.get(i).toString().replace("\"lng\":","")
+                                .replace("{\"lat\":","[")
+                                .replace("}","]");
+                                Log.i("path",p);
+                                double[] LatLongs= new Gson().fromJson(p,double[].class) ;
+                                Position position=new Position(LatLongs[0],LatLongs[1]);
+
+//                                Position position=new Position(null,Double.parseDouble(LatLongs.get("lat").toString()),Double.parseDouble(LatLongs.get("lng").toString()));
+
                                 pathPointList.add(position);
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                }
+            }
 
 
         }
-    }
+        }
     }
 
     public void getStationsB(List<Station>stations) {
@@ -750,7 +781,7 @@ Toasty.error(getContext(),t.getCause()+"").show();
     stationsAndInerStationsPositionList=new ArrayList<>();
     stationPositionList=new ArrayList<>();
     pathPointList=new ArrayList<>();
-    Collections.reverse(stations);
+//    Collections.reverse(stations);
     for (Station s:stations){
         if (s.getB_a_latitude()!=0.0){
 
@@ -761,11 +792,11 @@ Toasty.error(getContext(),t.getCause()+"").show();
                 stationNamesStrings.add((s.getName()));
             stationTitle.add((s.getName()));
                 if(!s.equals(stations.get(stations.size()-1))){
-                    stationNamesStrings.add("");
-                    stationNamesStrings.add("");
-                    stationNamesStrings.add("");
+//                    stationNamesStrings.add("");
+//                    stationNamesStrings.add("");
+//                    stationNamesStrings.add("");
                 }
-                Position sPosition=new Position(s.getB_a_address(),s.getB_a_latitude(),s.getB_a_longitude());
+                Position sPosition=new Position(s.getB_a_latitude(),s.getB_a_longitude());
                 stationPositionList.add(sPosition);
                 stationsAndInerStationsPositionList.add(sPosition);
 
@@ -777,35 +808,36 @@ Toasty.error(getContext(),t.getCause()+"").show();
 
                List<IntermediaryPoint>points = new ArrayList<>();
                 points=PointInOrder(interStationList.get(0).getIntermediary_point());
-                Collections.reverse(points);
+//                Collections.reverse(points);
                 for(IntermediaryPoint point :points ){
-                    Position InterS_Position;
-                        InterS_Position=new Position(point.getA_b_address(),point.getB_a_latitude(),point.getB_a_longitude());
-                        stationsAndInerStationsPositionList.add(InterS_Position);
+//                    Position InterS_Position;
+//                        InterS_Position=new Position(point.getB_a_latitude(),point.getB_a_longitude());
+//                        stationsAndInerStationsPositionList.add(InterS_Position);
                 }
 
     //           Path point list
                 JSONArray jsonArray;
+                for (InterStation interStation:interStationList){
+                    try {
+                        jsonArray=new JSONArray( interStation.getB_a_path());
+                        for (int i = 0; i < jsonArray.length(); i++) {
+//
+                            String p=jsonArray.get(i).toString().replace("\"lng\":","")
+                                    .replace("{\"lat\":","[")
+                                    .replace("}","]");
+                            Log.i("path",p);
+                            double[] LatLongs= new Gson().fromJson(p,double[].class) ;
+                            Position position=new Position(LatLongs[0],LatLongs[1]);
 
-                    for (InterStation interStation:interStationList){
-                        try {
+//                          Position position=new Position(null,Double.parseDouble(LatLongs.get("lat").toString()),Double.parseDouble(LatLongs.get("lng").toString()));
 
-                                jsonArray = new JSONArray(interStation.getB_a_path());
+                            pathPointList.add(position);
 
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                double[] LatLongs = new Gson().fromJson(jsonArray.get(i).toString(), double[].class);
-                                Position position = new Position(null, LatLongs[0], LatLongs[1]);
-                                pathPointList.add(position);
-//                                JSONObject LatLongs = new Gson().fromJson(jsonArray.get(i).toString(), JSONObject.class);
-//                                Position position = new Position(null, LatLongs.getDouble("lat"), LatLongs.getDouble("lng"));
-//                                pathPointList.add(position);
-
-                                }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
+                }
                 }
 
             Log.i("home", "getStations: "+stationsAndInerStationsPositionList);
@@ -821,8 +853,6 @@ Toasty.error(getContext(),t.getCause()+"").show();
             return o1.getOrder().compareTo(o2.getOrder());
         }
     });
-
-
     return points;
 
 

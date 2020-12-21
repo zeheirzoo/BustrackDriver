@@ -19,6 +19,7 @@ import android.view.View;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.example.driver.controller.ConnexionController;
 
 import javax.xml.transform.Result;
 
@@ -32,6 +33,7 @@ public class QrLoginActivity extends AppCompatActivity {
     CodeScanner mCodeScanner;
     Activity activity = this;
     Vibrator vibrator;
+    String url = ConnexionController.getWebUrl();
     CodeScannerView scannerView;
             boolean b=false;
     @Override

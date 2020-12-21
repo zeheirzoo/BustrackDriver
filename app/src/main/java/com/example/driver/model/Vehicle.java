@@ -32,6 +32,7 @@ public class Vehicle implements Serializable {
      *     }
      */
     private int id;
+    private int num_bus;
     private int vehicle_owner_id;
     private int vehicle_type_id;
     private int seatmaxcount;
@@ -55,6 +56,14 @@ public class Vehicle implements Serializable {
         this.registernumbre = registernumbre;
         this.vehicle_position = vehicle_position;
         this.vehicle_type = vehicle_type;
+    }
+
+    public int getNum_bus() {
+        return num_bus;
+    }
+
+    public void setNum_bus(int num_bus) {
+        this.num_bus = num_bus;
     }
 
     public int getId() {
@@ -133,6 +142,7 @@ public class Vehicle implements Serializable {
     public String toString() {
         return "Vehicle{" +
                 "id=" + id +
+                "num_bus=" + num_bus +
                 ", vehicle_owner_id=" + vehicle_owner_id +
                 ", vehicle_type_id=" + vehicle_type_id +
                 ", seatmaxcount=" + seatmaxcount +
